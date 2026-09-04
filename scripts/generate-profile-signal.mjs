@@ -42,10 +42,8 @@ const CONFIG = {
     tracking: 0.35,
     prompt: "C:\\Zunbreak>",
     message: "Knock, knock.",
-    cursorWidth: 7,
-    cursorHeight: 14,
-    cursorGap: 6,
-    duration: "1.05s",
+    cursorDx: 3,
+    duration: "1.8s",
   },
   type: {
     labelSize: 11,
@@ -215,9 +213,6 @@ const lastPublicValue = publicRepo
   : CONFIG.labels.empty;
 
 const terminalLine = `${CONFIG.terminal.prompt} ${CONFIG.terminal.message}`;
-const terminalAdvance = CONFIG.terminal.size * 0.6 + CONFIG.terminal.tracking;
-const cursorX = CONFIG.terminal.x + terminalLine.length * terminalAdvance + CONFIG.terminal.cursorGap;
-const cursorY = CONFIG.terminal.y - CONFIG.terminal.cursorHeight + 1;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" height="${CONFIG.height}" viewBox="0 0 ${CONFIG.width} ${CONFIG.height}" role="img" aria-labelledby="title description">
   <title id="title">Zunbreak GitHub activity</title>
@@ -233,14 +228,11 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="428" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
     <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
     <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
-    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}</text>
+    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
   <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
   ${graphBars}
-  <rect x="${cursorX.toFixed(1)}" y="${cursorY}" width="${CONFIG.terminal.cursorWidth}" height="${CONFIG.terminal.cursorHeight}" fill="${CONFIG.colors.gold}">
-    <animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" repeatCount="indefinite"/>
-  </rect>
 </svg>
 `;
 
