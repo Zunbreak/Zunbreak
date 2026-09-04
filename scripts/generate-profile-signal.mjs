@@ -33,6 +33,7 @@ const CONFIG = {
     amplitude: 28,
     lineWidth: 1.25,
     areaOpacity: 0.12,
+    barWidth: 5,
     glowWidth: 6,
     glowBlur: 2.5,
   },
@@ -212,7 +213,7 @@ const latestActivityDate =
     .at(-1) || null;
 
 const maxDaily = Math.max(...lastFourteen.map((day) => day.contributionCount), 1);
-const { x0, x1, yBase, amplitude, lineWidth, areaOpacity, glowWidth, glowBlur } = CONFIG.graph;
+const { x0, x1, yBase, amplitude, lineWidth, areaOpacity, barWidth, glowWidth, glowBlur } = CONFIG.graph;
 const span = Math.max(CONFIG.days - 1, 1);
 const peakY = yBase - amplitude;
 
@@ -224,6 +225,13 @@ const points = lastFourteen.map((day, index) => {
 
 const curve = catmullRomPath(points, yBase);
 const areaPath = `${curve} L ${x1.toFixed(1)} ${yBase} L ${x0.toFixed(1)} ${yBase} Z`;
+const graphBars = points
+  .map((point) => {
+    const height = Math.max(2, yBase - point.y);
+    const opacity = point.count === 0 ? 0.12 : 0.22 + (point.count / maxDaily) * 0.45;
+    return `<rect x="${(point.x - barWidth / 2).toFixed(1)}" y="${point.y.toFixed(1)}" width="${barWidth}" height="${height.toFixed(1)}" fill="${CONFIG.colors.graph}" opacity="${opacity.toFixed(2)}"/>`;
+  })
+  .join("");
 
 const lastPublicValue = publicRepo
   ? `${clip(publicRepo.toUpperCase(), CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
@@ -261,6 +269,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" calcMode="${CONFIG.terminal.calcMode}" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <path d="${areaPath}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
+  ${graphBars}
   <path d="${curve}" fill="none" stroke="url(#signalGlow)" stroke-width="${glowWidth}" stroke-linecap="round" filter="url(#signalBlur)"/>
   <path d="${curve}" fill="none" stroke="url(#signalPeak)" stroke-width="${lineWidth}" stroke-linecap="round"/>
 </svg>
