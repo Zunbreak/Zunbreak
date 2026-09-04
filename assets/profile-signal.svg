@@ -3,21 +3,21 @@
   <desc id="description">Fourteen-day contribution signal, latest activity date, last public push and activity state.</desc>
   <rect x="1" y="1" width="1198" height="188" rx="8" fill="#07090d" stroke="#343a43" stroke-width="2"/>
   <path d="M18 2 H1182" fill="none" stroke="#e8ad21" stroke-width="2" opacity="0.78"/>
-  <polygon points="40,168 40.0,168.0 126.2,168.0 212.3,168.0 298.5,168.0 384.6,168.0 470.8,168.0 556.9,168.0 643.1,168.0 729.2,168.0 815.4,168.0 901.5,168.0 987.7,168.0 1073.8,168.0 1160.0,168.0 1160,168" fill="#e8ad21" opacity="0.06"/>
-  <polyline points="40.0,168.0 126.2,168.0 212.3,168.0 298.5,168.0 384.6,168.0 470.8,168.0 556.9,168.0 643.1,168.0 729.2,168.0 815.4,168.0 901.5,168.0 987.7,168.0 1073.8,168.0 1160.0,168.0" fill="none" stroke="#e8ad21" stroke-width="1.5" opacity="0.22"/>
-  <rect x="35.0" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="121.2" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="207.3" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="293.5" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="379.6" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="465.8" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="551.9" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="638.1" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="724.2" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="810.4" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="896.5" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="982.7" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="1068.8" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="1155.0" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/>
+  <polygon points="40,168 40.0,168.0 126.2,168.0 212.3,168.0 298.5,135.7 384.6,168.0 470.8,163.0 556.9,168.0 643.1,168.0 729.2,168.0 815.4,105.8 901.5,76.0 987.7,145.6 1073.8,155.6 1160.0,128.2 1160,168" fill="#e8ad21" opacity="0.06"/>
+  <polyline points="40.0,168.0 126.2,168.0 212.3,168.0 298.5,135.7 384.6,168.0 470.8,163.0 556.9,168.0 643.1,168.0 729.2,168.0 815.4,105.8 901.5,76.0 987.7,145.6 1073.8,155.6 1160.0,128.2" fill="none" stroke="#e8ad21" stroke-width="1.5" opacity="0.22"/>
+  <rect x="35.0" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="121.2" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="207.3" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="293.5" y="135.7" width="10" height="32.3" fill="#e8ad21" opacity="0.46"/><rect x="379.6" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="465.8" y="163.0" width="10" height="5.0" fill="#e8ad21" opacity="0.31"/><rect x="551.9" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="638.1" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="724.2" y="168.0" width="10" height="3.0" fill="#e8ad21" opacity="0.14"/><rect x="810.4" y="105.8" width="10" height="62.2" fill="#e8ad21" opacity="0.62"/><rect x="896.5" y="76.0" width="10" height="92.0" fill="#e8ad21" opacity="0.78"/><rect x="982.7" y="145.6" width="10" height="22.4" fill="#e8ad21" opacity="0.40"/><rect x="1068.8" y="155.6" width="10" height="12.4" fill="#e8ad21" opacity="0.35"/><rect x="1155.0" y="128.2" width="10" height="39.8" fill="#e8ad21" opacity="0.50"/>
   <line x1="300" y1="26" x2="300" y2="142" stroke="#252b33" stroke-width="1"/>
   <line x1="600" y1="26" x2="600" y2="142" stroke="#252b33" stroke-width="1"/>
   <line x1="900" y1="26" x2="900" y2="142" stroke="#252b33" stroke-width="1"/>
   <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
     <text x="36" y="48" fill="#e8ad21" font-size="11" letter-spacing="2">SIGNAL / 14D</text>
-    <text x="36" y="108" fill="#f4f1e9" font-size="42" font-weight="700">00</text>
+    <text x="36" y="108" fill="#f4f1e9" font-size="42" font-weight="700">107</text>
     <text x="328" y="48" fill="#e8ad21" font-size="11" letter-spacing="2">LATEST SIGNAL</text>
-    <text x="328" y="96" fill="#f4f1e9" font-size="18">QUIET</text>
+    <text x="328" y="96" fill="#f4f1e9" font-size="18">04 SEPT 2026</text>
     
     <text x="628" y="48" fill="#e8ad21" font-size="11" letter-spacing="2">LAST PUBLIC PUSH</text>
     <text x="628" y="96" fill="#f4f1e9" font-size="16">QUIET</text>
     <text x="928" y="48" fill="#e8ad21" font-size="11" letter-spacing="2">STATE</text>
-    <text x="928" y="108" fill="#8b949e" font-size="32" font-weight="700">CALM</text>
+    <text x="928" y="108" fill="#f4f1e9" font-size="32" font-weight="700">SURGE</text>
   </g>
 </svg>
