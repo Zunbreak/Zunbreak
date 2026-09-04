@@ -47,7 +47,7 @@ const CONFIG = {
     calcMode: "discrete",
   },
   type: {
-    labelSize: 11,
+    labelSize: 14,
     labelTracking: 1.6,
     valueSize: 42,
     dateSize: 22,

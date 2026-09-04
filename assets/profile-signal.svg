@@ -6,11 +6,11 @@
   <line x1="400" y1="28" x2="400" y2="128" stroke="#252b33" stroke-width="1"/>
   <line x1="800" y1="28" x2="800" y2="128" stroke="#252b33" stroke-width="1"/>
   <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
-    <text x="36" y="52" fill="#e8ad21" font-size="11" letter-spacing="1.6">CONTRIBUTIONS · LAST 14 DAYS</text>
+    <text x="36" y="52" fill="#e8ad21" font-size="14" letter-spacing="1.6">CONTRIBUTIONS · LAST 14 DAYS</text>
     <text x="36" y="108" fill="#f4f1e9" font-size="42" font-weight="700">134</text>
-    <text x="428" y="52" fill="#e8ad21" font-size="11" letter-spacing="1.6">LATEST ACTIVITY</text>
+    <text x="428" y="52" fill="#e8ad21" font-size="14" letter-spacing="1.6">LATEST ACTIVITY</text>
     <text x="428" y="108" fill="#f4f1e9" font-size="22">04 SEP 2026</text>
-    <text x="828" y="52" fill="#e8ad21" font-size="11" letter-spacing="1.6">LATEST PUBLIC PUSH</text>
+    <text x="828" y="52" fill="#e8ad21" font-size="14" letter-spacing="1.6">LATEST PUBLIC PUSH</text>
     <text x="828" y="108" fill="#f4f1e9" font-size="18">ZUNBREAK/ZUNBREAK · 04 SEP 2026</text>
     <text x="36" y="182" fill="#e8ad21" font-size="13" letter-spacing="0.35" font-weight="600">C:\Zunbreak&gt; Knock, knock.<tspan dx="3"><animate attributeName="opacity" values="1;0" dur="1.05s" calcMode="discrete" repeatCount="indefinite"/>█</tspan></text>
   </g>

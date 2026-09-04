@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="./assets/zunbreak-hero.gif?v=2" width="100%" alt="Zunbreak — Securing the Human Link" />
+<img src="./assets/zunbreak-hero.gif?v=3" width="100%" alt="Zunbreak — Securing the Human Link" />
 
-<img src="./assets/profile-signal.svg?v=6" width="100%" alt="Zunbreak GitHub activity signal" />
+<img src="./assets/profile-signal.svg?v=7" width="100%" alt="Zunbreak GitHub activity signal" />
 
 </div>
 
