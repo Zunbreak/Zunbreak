@@ -3,6 +3,9 @@
   <desc id="description">Fourteen-day contributions, latest activity date and latest public push.</desc>
   <rect x="1" y="1" width="1198" height="188" rx="8" fill="#07090d" stroke="#343a43" stroke-width="2"/>
   <path d="M18 2 H1182" fill="none" stroke="#e8ad21" stroke-width="2" opacity="0.78"/>
+  <circle cx="28" cy="20" r="3" fill="#e8ad21">
+    <animate attributeName="opacity" values="0.32;0.92;0.32" dur="3.2s" repeatCount="indefinite"/>
+  </circle>
   <line x1="400" y1="28" x2="400" y2="128" stroke="#252b33" stroke-width="1"/>
   <line x1="800" y1="28" x2="800" y2="128" stroke="#252b33" stroke-width="1"/>
   <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">

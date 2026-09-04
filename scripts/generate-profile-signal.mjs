@@ -35,6 +35,13 @@ const CONFIG = {
     lineOpacity: 0.28,
     areaOpacity: 0.05,
   },
+  live: {
+    cx: 28,
+    cy: 20,
+    r: 3,
+    duration: "3.2s",
+    opacity: "0.32;0.92;0.32",
+  },
   type: {
     labelSize: 11,
     labelTracking: 1.6,
@@ -207,6 +214,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
   <desc id="description">Fourteen-day contributions, latest activity date and latest public push.</desc>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
+  <circle cx="${CONFIG.live.cx}" cy="${CONFIG.live.cy}" r="${CONFIG.live.r}" fill="${CONFIG.colors.gold}">
+    <animate attributeName="opacity" values="${CONFIG.live.opacity}" dur="${CONFIG.live.duration}" repeatCount="indefinite"/>
+  </circle>
   <line x1="400" y1="28" x2="400" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <line x1="800" y1="28" x2="800" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <g font-family="${CONFIG.type.family}">

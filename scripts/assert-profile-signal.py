@@ -57,8 +57,12 @@ def main() -> None:
     svg = SVG.read_text(encoding="utf-8")
     if 'viewBox="0 0 1200 190"' not in svg:
         fail("SVG must use viewBox 0 0 1200 190.")
-    if "<script" in svg.lower() or "<animate" in svg.lower():
-        fail("SVG must not contain JavaScript or animation.")
+    if "<script" in svg.lower():
+        fail("SVG must not contain JavaScript.")
+    if "graphScan" in svg:
+        fail("SVG must not include the graph scan.")
+    if svg.lower().count("<animate") != 1 or 'attributeName="opacity"' not in svg:
+        fail("SVG should keep a single live-dot opacity pulse.")
     for label in (
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",
