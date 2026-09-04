@@ -35,12 +35,17 @@ const CONFIG = {
     lineOpacity: 0.28,
     areaOpacity: 0.05,
   },
-  live: {
-    cx: 28,
-    cy: 20,
-    r: 3,
-    duration: "3.2s",
-    opacity: "0.32;0.92;0.32",
+  terminal: {
+    x: 36,
+    y: 180,
+    size: 10,
+    tracking: 1.1,
+    prompt: "ZUNBREAK>",
+    message: "Knock, knock.",
+    cursorWidth: 6,
+    cursorHeight: 11,
+    cursorGap: 5,
+    duration: "1.05s",
   },
   type: {
     labelSize: 11,
@@ -209,14 +214,16 @@ const lastPublicValue = publicRepo
   ? `${clip(publicRepo.toUpperCase(), CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
   : CONFIG.labels.empty;
 
+const terminalLine = `${CONFIG.terminal.prompt} ${CONFIG.terminal.message}`;
+const terminalAdvance = CONFIG.terminal.size * 0.6 + CONFIG.terminal.tracking;
+const cursorX = CONFIG.terminal.x + terminalLine.length * terminalAdvance + CONFIG.terminal.cursorGap;
+const cursorY = CONFIG.terminal.y - CONFIG.terminal.cursorHeight + 1;
+
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" height="${CONFIG.height}" viewBox="0 0 ${CONFIG.width} ${CONFIG.height}" role="img" aria-labelledby="title description">
   <title id="title">Zunbreak GitHub activity</title>
   <desc id="description">Fourteen-day contributions, latest activity date and latest public push.</desc>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
-  <circle cx="${CONFIG.live.cx}" cy="${CONFIG.live.cy}" r="${CONFIG.live.r}" fill="${CONFIG.colors.gold}">
-    <animate attributeName="opacity" values="${CONFIG.live.opacity}" dur="${CONFIG.live.duration}" repeatCount="indefinite"/>
-  </circle>
   <line x1="400" y1="28" x2="400" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <line x1="800" y1="28" x2="800" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <g font-family="${CONFIG.type.family}">
@@ -226,10 +233,14 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="428" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
     <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
     <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
+    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}">${escapeXml(terminalLine)}</text>
   </g>
   <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
   <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
   ${graphBars}
+  <rect x="${cursorX.toFixed(1)}" y="${cursorY}" width="${CONFIG.terminal.cursorWidth}" height="${CONFIG.terminal.cursorHeight}" fill="${CONFIG.colors.gold}">
+    <animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" repeatCount="indefinite"/>
+  </rect>
 </svg>
 `;
 

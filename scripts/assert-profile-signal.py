@@ -61,8 +61,13 @@ def main() -> None:
         fail("SVG must not contain JavaScript.")
     if "graphScan" in svg:
         fail("SVG must not include the graph scan.")
+    if "Knock, knock." not in svg:
+        fail("SVG must include the terminal knock line.")
+    for banned in ("Neo", "NEO", "Matrix", "MATRIX", "rabbit", "C:\\Users"):
+        if banned in svg:
+            fail(f"SVG must stay subtle; found {banned}.")
     if svg.lower().count("<animate") != 1 or 'attributeName="opacity"' not in svg:
-        fail("SVG should keep a single live-dot opacity pulse.")
+        fail("SVG should keep a single blinking terminal cursor.")
     for label in (
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",
