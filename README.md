@@ -2,7 +2,7 @@
 
 <img src="./assets/zunbreak-hero.gif" width="100%" alt="Zunbreak — Securing the Human Link" />
 
-<img src="./assets/profile-signal.svg?v=2" width="100%" alt="Zunbreak GitHub activity signal" />
+<img src="./assets/profile-signal.svg?v=3" width="100%" alt="Zunbreak GitHub activity signal" />
 
 </div>
 

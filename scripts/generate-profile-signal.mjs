@@ -233,15 +233,12 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="428" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
     <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
     <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
-    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">
-      <tspan fill="${CONFIG.colors.gold}">${escapeXml(CONFIG.terminal.prompt)} </tspan>
-      <tspan fill="${CONFIG.colors.text}">${escapeXml(CONFIG.terminal.message)}</tspan>
-    </text>
+    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}</text>
   </g>
   <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
   <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
   ${graphBars}
-  <rect x="${cursorX.toFixed(1)}" y="${cursorY}" width="${CONFIG.terminal.cursorWidth}" height="${CONFIG.terminal.cursorHeight}" fill="${CONFIG.colors.text}">
+  <rect x="${cursorX.toFixed(1)}" y="${cursorY}" width="${CONFIG.terminal.cursorWidth}" height="${CONFIG.terminal.cursorHeight}" fill="${CONFIG.colors.gold}">
     <animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" repeatCount="indefinite"/>
   </rect>
 </svg>
