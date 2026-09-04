@@ -32,8 +32,9 @@ const CONFIG = {
     yBase: 158,
     amplitude: 28,
     lineWidth: 1.25,
-    lineOpacity: 0.42,
     areaOpacity: 0.12,
+    glowWidth: 6,
+    glowBlur: 2.5,
   },
   terminal: {
     x: 36,
@@ -211,8 +212,9 @@ const latestActivityDate =
     .at(-1) || null;
 
 const maxDaily = Math.max(...lastFourteen.map((day) => day.contributionCount), 1);
-const { x0, x1, yBase, amplitude, lineWidth, lineOpacity, areaOpacity } = CONFIG.graph;
+const { x0, x1, yBase, amplitude, lineWidth, areaOpacity, glowWidth, glowBlur } = CONFIG.graph;
 const span = Math.max(CONFIG.days - 1, 1);
+const peakY = yBase - amplitude;
 
 const points = lastFourteen.map((day, index) => {
   const x = x0 + (index / span) * (x1 - x0);
@@ -232,6 +234,19 @@ const terminalLine = `${CONFIG.terminal.prompt} ${CONFIG.terminal.message}`;
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" height="${CONFIG.height}" viewBox="0 0 ${CONFIG.width} ${CONFIG.height}" role="img" aria-labelledby="title description">
   <title id="title">Zunbreak GitHub activity</title>
   <desc id="description">Fourteen-day contributions, latest activity date and latest public push.</desc>
+  <defs>
+    <linearGradient id="signalPeak" gradientUnits="userSpaceOnUse" x1="0" y1="${peakY}" x2="0" y2="${yBase}">
+      <stop offset="0" stop-color="${CONFIG.colors.graph}" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="${CONFIG.colors.graph}" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="signalGlow" gradientUnits="userSpaceOnUse" x1="0" y1="${peakY}" x2="0" y2="${yBase}">
+      <stop offset="0" stop-color="${CONFIG.colors.graph}" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="${CONFIG.colors.graph}" stop-opacity="0.04"/>
+    </linearGradient>
+    <filter id="signalBlur" x="-8%" y="-80%" width="116%" height="260%">
+      <feGaussianBlur stdDeviation="${glowBlur}"/>
+    </filter>
+  </defs>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
   <line x1="400" y1="28" x2="400" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
@@ -246,7 +261,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" calcMode="${CONFIG.terminal.calcMode}" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <path d="${areaPath}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
-  <path d="${curve}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="${lineWidth}" opacity="${lineOpacity}"/>
+  <path d="${curve}" fill="none" stroke="url(#signalGlow)" stroke-width="${glowWidth}" stroke-linecap="round" filter="url(#signalBlur)"/>
+  <path d="${curve}" fill="none" stroke="url(#signalPeak)" stroke-width="${lineWidth}" stroke-linecap="round"/>
 </svg>
 `;
 
