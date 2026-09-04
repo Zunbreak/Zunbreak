@@ -31,7 +31,9 @@ const CONFIG = {
     x1: 1160,
     yBase: 158,
     amplitude: 28,
-    barWidth: 5,
+    lineWidth: 1.25,
+    lineOpacity: 0.42,
+    areaOpacity: 0.12,
   },
   terminal: {
     x: 36,
@@ -92,6 +94,27 @@ function formatDate(value) {
 function clip(value, max) {
   const text = String(value);
   return text.length <= max ? text : `${text.slice(0, Math.max(max - 1, 1))}…`;
+}
+
+function catmullRomPath(points, yMax) {
+  if (points.length === 0) return "";
+  const at = (index) => points[Math.max(0, Math.min(points.length - 1, index))];
+  const clampY = (y) => (yMax == null ? y : Math.min(y, yMax));
+  const parts = [`M ${points[0].x.toFixed(1)} ${clampY(points[0].y).toFixed(1)}`];
+  for (let index = 0; index < points.length - 1; index++) {
+    const p0 = at(index - 1);
+    const p1 = at(index);
+    const p2 = at(index + 1);
+    const p3 = at(index + 2);
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = clampY(p1.y + (p2.y - p0.y) / 6);
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = clampY(p2.y - (p3.y - p1.y) / 6);
+    parts.push(
+      `C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${clampY(p2.y).toFixed(1)}`,
+    );
+  }
+  return parts.join(" ");
 }
 
 async function getJson(url) {
@@ -188,7 +211,7 @@ const latestActivityDate =
     .at(-1) || null;
 
 const maxDaily = Math.max(...lastFourteen.map((day) => day.contributionCount), 1);
-const { x0, x1, yBase, amplitude, barWidth } = CONFIG.graph;
+const { x0, x1, yBase, amplitude, lineWidth, lineOpacity, areaOpacity } = CONFIG.graph;
 const span = Math.max(CONFIG.days - 1, 1);
 
 const points = lastFourteen.map((day, index) => {
@@ -197,13 +220,8 @@ const points = lastFourteen.map((day, index) => {
   return { x, y, count: day.contributionCount };
 });
 
-const graphBars = points
-  .map((point) => {
-    const height = Math.max(2, yBase - point.y);
-    const opacity = point.count === 0 ? 0.12 : 0.22 + (point.count / maxDaily) * 0.45;
-    return `<rect x="${(point.x - barWidth / 2).toFixed(1)}" y="${point.y.toFixed(1)}" width="${barWidth}" height="${height.toFixed(1)}" fill="${CONFIG.colors.graph}" opacity="${opacity.toFixed(2)}"/>`;
-  })
-  .join("");
+const curve = catmullRomPath(points, yBase);
+const areaPath = `${curve} L ${x1.toFixed(1)} ${yBase} L ${x0.toFixed(1)} ${yBase} Z`;
 
 const lastPublicValue = publicRepo
   ? `${clip(publicRepo.toUpperCase(), CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
@@ -227,7 +245,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
     <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" calcMode="${CONFIG.terminal.calcMode}" repeatCount="indefinite"/>█</tspan></text>
   </g>
-  ${graphBars}
+  <path d="${areaPath}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
+  <path d="${curve}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="${lineWidth}" opacity="${lineOpacity}"/>
 </svg>
 `;
 
