@@ -46,8 +46,12 @@ def main() -> None:
     if image.format != "GIF":
         fail(f"Hero file is {image.format}, expected GIF.")
     frames = getattr(image, "n_frames", 1)
-    if frames < 20:
-        fail(f"Hero GIF has {frames} frames; expected a looping lab animation.")
+    delay_ms = image.info.get("duration") or 80
+    seconds = frames * delay_ms / 1000
+    if seconds < 18:
+        fail(
+            f"Hero GIF is {seconds:.1f}s; expected a ~20s slow loop so the restart is not obvious."
+        )
     width, height = image.size
     if width != 1200 or height != 400:
         fail(f"Hero GIF is {width}x{height}; expected 1200x400.")

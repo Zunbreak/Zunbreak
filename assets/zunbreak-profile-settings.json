@@ -3,7 +3,7 @@
   "canvas": {
     "width": 1200,
     "height": 400,
-    "durationSeconds": 6
+    "durationSeconds": 20
   },
   "settings": {
     "amplitude": 10,

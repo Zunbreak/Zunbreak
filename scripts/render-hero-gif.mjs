@@ -51,9 +51,8 @@ const { port } = server.address();
 const payload = JSON.parse(await readFile(settingsPath, "utf8"));
 const settings = payload.settings;
 const fps = 12;
-const naturalPeriod = 4.8 / Math.max(Number(settings.tempo) || 0.2, 0.2);
-const frameCount = Math.round(naturalPeriod * fps);
-const loopPeriod = frameCount / fps;
+const loopPeriod = 20;
+const frameCount = Math.round(loopPeriod * fps);
 settings.loopPeriod = loopPeriod;
 
 const browser = await puppeteer.launch({
