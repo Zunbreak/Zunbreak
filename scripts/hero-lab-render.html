@@ -101,26 +101,27 @@
       target.fillRect(0, 0, 850, HEIGHT);
     }
 
-    function loopCycle(config) {
-      return Number(config.loopPeriod) || (4.8 / Math.max(Number(config.tempo) || 0.2, 0.2));
-    }
-
     function loopUnit(time, config) {
-      const cycle = loopCycle(config);
-      const wrapped = ((time % cycle) + cycle) % cycle;
-      return { cycle, u: wrapped / cycle, t: wrapped };
+      const period = Number(config.loopPeriod) || (2 * (4.8 / Math.max(Number(config.tempo) || 0.2, 0.2)));
+      const wrapped = ((time % period) + period) % period;
+      const cycle = period / 2;
+      return { period, cycle, u: wrapped / period, t: wrapped };
     }
 
     function renderParticles(target, time, config) {
-      const { u } = loopUnit(time, config);
+      const { u, period } = loopUnit(time, config);
       const amount = Math.round(particles.length * config.particles / 100);
+      const tempo = Math.max(Number(config.tempo) || 0.2, 0.2);
       target.save();
       target.globalCompositeOperation = "screen";
       for (let index = 0; index < amount; index++) {
         const particle = particles[index];
-        const x = particle.x + Math.sin(u * Math.PI * 2 + particle.phase) * 3.2;
-        const y = particle.y + Math.cos(u * Math.PI * 2 + particle.phase) * 2.2;
-        const shimmer = .34 + .66 * (.5 + .5 * Math.sin(u * Math.PI * 2 + particle.phase));
+        const xTurns = Math.max(1, Math.round(period * tempo * particle.drift / (Math.PI * 2)));
+        const yTurns = Math.max(1, Math.round(period * tempo * 0.7 / (Math.PI * 2)));
+        const shimmerTurns = Math.max(1, Math.round(period * tempo * 2 / (Math.PI * 2)));
+        const x = particle.x + Math.sin(u * xTurns * Math.PI * 2 + particle.phase) * 3.2;
+        const y = particle.y + Math.cos(u * yTurns * Math.PI * 2 + particle.phase) * 2.2;
+        const shimmer = .34 + .66 * (.5 + .5 * Math.sin(u * shimmerTurns * Math.PI * 2 + particle.phase));
         target.globalAlpha = particle.alpha * shimmer * .72;
         target.fillStyle = "#f1b52a";
         target.beginPath();
@@ -137,9 +138,10 @@
       const step = Math.max(3, Math.round(6 / config.density));
       const amp = config.amplitude;
       const glow = config.glow / 100;
+      const speed = Math.max(Number(config.tempo) || 0.2, 0.2);
       const centerX = 591;
       const halfSpan = Math.max(centerX - startX, endX - centerX);
-      const { u } = loopUnit(time, config);
+      const { cycle, u, t, period } = loopUnit(time, config);
 
       target.save();
       target.globalCompositeOperation = "screen";
@@ -155,16 +157,28 @@
         target.shadowBlur = 3 + glow * 13;
       }
 
+      const pulsePhases = Array.from({ length: 3 }, (_, index) =>
+        ((t + index * cycle / 3) % cycle) / cycle
+      );
+      const carrierTurnsA = Math.max(1, Math.round(period * speed * 2.1 / (Math.PI * 2)));
+      const carrierTurnsB = Math.max(1, Math.round(period * speed * 1.4 / (Math.PI * 2)));
+      const carrierTurnsC = Math.max(1, Math.round(period * speed * 0.9 / (Math.PI * 2)));
+
       for (let x = startX; x <= endX; x += step) {
         const n = (x - startX) / (endX - startX);
         const radialDistance = Math.abs(x - centerX);
         const radialProgress = radialDistance / halfSpan;
-        const pulse = 0.5 + 0.5 * Math.cos((radialProgress - u) * Math.PI * 2);
-        const envelope = .22 + .78 * pulse;
+        let outwardPulse = 0;
+        for (const pulsePhase of pulsePhases) {
+          const distance = radialProgress - pulsePhase;
+          const pulse = Math.exp(-(distance * distance) / .008) * (1 - pulsePhase * .24);
+          outwardPulse = Math.max(outwardPulse, pulse);
+        }
+        const envelope = .14 + .86 * outwardPulse;
         const carrier =
-          Math.sin(radialDistance * .098 * config.density - u * Math.PI * 4) * .52 +
-          Math.sin(radialDistance * .043 * config.density - u * Math.PI * 2) * .31 +
-          Math.sin(radialDistance * .173 * config.density - u * Math.PI * 2) * .17;
+          Math.sin(radialDistance * .098 * config.density - u * carrierTurnsA * Math.PI * 2) * .52 +
+          Math.sin(radialDistance * .043 * config.density - u * carrierTurnsB * Math.PI * 2) * .31 +
+          Math.sin(radialDistance * .173 * config.density - u * carrierTurnsC * Math.PI * 2) * .17;
         const texture = .42 + .58 * Math.abs(carrier);
         const height = 1.5 + amp * envelope * texture;
         const silhouetteFade = n > .86 ? Math.max(0, (1 - n) / .14) : 1;
@@ -187,18 +201,18 @@
       if (strength <= 0) return;
       const centerX = 591;
       const centerY = 278;
-      const { u } = loopUnit(time, config);
+      const { cycle, u, t } = loopUnit(time, config);
       for (let index = 0; index < 3; index++) {
-        const phase = u * Math.PI * 2 + index * (Math.PI * 2 / 3);
-        const radius = 54 + Math.sin(phase) * 26;
-        const alpha = (0.16 + 0.16 * (0.5 + 0.5 * Math.cos(phase))) * strength;
+        const phase = ((t + index * cycle / 3) % cycle) / cycle;
+        const radius = 24 + phase * 116;
+        const alpha = (1 - phase) * strength * .32;
         target.strokeStyle = `rgba(236,174,31,${alpha})`;
         target.lineWidth = 1;
         target.beginPath();
         target.arc(centerX, centerY, radius, 0, Math.PI * 2);
         target.stroke();
       }
-      const corePulse = .72 + .28 * Math.sin(u * Math.PI * 2);
+      const corePulse = .68 + .32 * Math.sin(u * Math.PI * 4);
       const core = target.createRadialGradient(centerX, centerY, 0, centerX, centerY, 30 + strength * 18);
       core.addColorStop(0, `rgba(255,220,107,${.45 * strength * corePulse})`);
       core.addColorStop(.18, `rgba(241,178,31,${.26 * strength * corePulse})`);
