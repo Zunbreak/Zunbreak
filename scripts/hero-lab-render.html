@@ -119,8 +119,8 @@
         const xTurns = Math.max(1, Math.round(period * tempo * particle.drift / (Math.PI * 2)));
         const yTurns = Math.max(1, Math.round(period * tempo * 0.7 / (Math.PI * 2)));
         const shimmerTurns = Math.max(1, Math.round(period * tempo * 2 / (Math.PI * 2)));
-        const x = particle.x + Math.sin(u * xTurns * Math.PI * 2 + particle.phase) * 3.2;
-        const y = particle.y + Math.cos(u * yTurns * Math.PI * 2 + particle.phase) * 2.2;
+        const x = particle.x + Math.sin(u * xTurns * Math.PI * 2 + particle.phase) * 10;
+        const y = particle.y + Math.cos(u * yTurns * Math.PI * 2 + particle.phase) * 7;
         const shimmer = .34 + .66 * (.5 + .5 * Math.sin(u * shimmerTurns * Math.PI * 2 + particle.phase));
         target.globalAlpha = particle.alpha * shimmer * .72;
         target.fillStyle = "#f1b52a";
