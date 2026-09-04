@@ -35,13 +35,6 @@ const CONFIG = {
     lineOpacity: 0.28,
     areaOpacity: 0.05,
   },
-  scan: {
-    duration: "10s",
-    width: 96,
-    height: 32,
-    y: 136,
-    peakOpacity: 0.35,
-  },
   type: {
     labelSize: 11,
     labelTracking: 1.6,
@@ -209,22 +202,9 @@ const lastPublicValue = publicRepo
   ? `${clip(publicRepo.toUpperCase(), CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
   : CONFIG.labels.empty;
 
-const scanFrom = x0 - CONFIG.scan.width;
-const scanTo = x1;
-
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" height="${CONFIG.height}" viewBox="0 0 ${CONFIG.width} ${CONFIG.height}" role="img" aria-labelledby="title description">
   <title id="title">Zunbreak GitHub activity</title>
   <desc id="description">Fourteen-day contributions, latest activity date and latest public push.</desc>
-  <defs>
-    <linearGradient id="graphScan" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="${CONFIG.colors.gold}" stop-opacity="0"/>
-      <stop offset="0.5" stop-color="${CONFIG.colors.gold}" stop-opacity="${CONFIG.scan.peakOpacity}"/>
-      <stop offset="1" stop-color="${CONFIG.colors.gold}" stop-opacity="0"/>
-    </linearGradient>
-    <clipPath id="graphScanClip">
-      <rect x="${x0}" y="${CONFIG.scan.y}" width="${x1 - x0}" height="${CONFIG.scan.height}"/>
-    </clipPath>
-  </defs>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
   <line x1="400" y1="28" x2="400" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
@@ -240,11 +220,6 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
   <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
   <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
   ${graphBars}
-  <g clip-path="url(#graphScanClip)" pointer-events="none">
-    <rect x="${scanFrom}" y="${CONFIG.scan.y}" width="${CONFIG.scan.width}" height="${CONFIG.scan.height}" fill="url(#graphScan)">
-      <animate attributeName="x" values="${scanFrom};${scanTo}" dur="${CONFIG.scan.duration}" repeatCount="indefinite"/>
-    </rect>
-  </g>
 </svg>
 `;
 

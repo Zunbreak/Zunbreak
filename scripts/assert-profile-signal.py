@@ -57,10 +57,8 @@ def main() -> None:
     svg = SVG.read_text(encoding="utf-8")
     if 'viewBox="0 0 1200 190"' not in svg:
         fail("SVG must use viewBox 0 0 1200 190.")
-    if "<script" in svg.lower():
-        fail("SVG must not contain JavaScript.")
-    if "id=\"graphScan\"" not in svg or "<animate " not in svg:
-        fail("SVG must include the graph scan animation.")
+    if "<script" in svg.lower() or "<animate" in svg.lower():
+        fail("SVG must not contain JavaScript or animation.")
     for label in (
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",
