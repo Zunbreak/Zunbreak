@@ -12,12 +12,12 @@
     <text x="428" y="108" fill="#f4f1e9" font-size="22">04 SEP 2026</text>
     <text x="828" y="52" fill="#e8ad21" font-size="11" letter-spacing="1.6">LATEST PUBLIC PUSH</text>
     <text x="828" y="108" fill="#f4f1e9" font-size="18">ZUNBREAK/ZUNBREAK · 04 SEP 2026</text>
-    <text x="36" y="180" fill="#e8ad21" font-size="10" letter-spacing="1.1">ZUNBREAK&gt; Knock, knock.</text>
+    <text x="36" y="180" fill="#e8ad21" font-size="10" letter-spacing="1.1">C:\Zunbreak&gt; Knock, knock.</text>
   </g>
   <polygon points="40,158 40.0,158.0 126.2,158.0 212.3,158.0 298.5,151.7 384.6,158.0 470.8,157.0 556.9,158.0 643.1,158.0 729.2,158.0 815.4,145.8 901.5,140.0 987.7,153.6 1073.8,155.6 1160.0,146.3 1160,158" fill="#e8ad21" opacity="0.05"/>
   <polyline points="40.0,158.0 126.2,158.0 212.3,158.0 298.5,151.7 384.6,158.0 470.8,157.0 556.9,158.0 643.1,158.0 729.2,158.0 815.4,145.8 901.5,140.0 987.7,153.6 1073.8,155.6 1160.0,146.3" fill="none" stroke="#e8ad21" stroke-width="1.25" opacity="0.28"/>
   <rect x="37.5" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="123.7" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="209.8" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="296.0" y="151.7" width="5" height="6.3" fill="#e8ad21" opacity="0.38"/><rect x="382.1" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="468.3" y="157.0" width="5" height="2.0" fill="#e8ad21" opacity="0.24"/><rect x="554.4" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="640.6" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="726.7" y="158.0" width="5" height="2.0" fill="#e8ad21" opacity="0.12"/><rect x="812.9" y="145.8" width="5" height="12.2" fill="#e8ad21" opacity="0.52"/><rect x="899.0" y="140.0" width="5" height="18.0" fill="#e8ad21" opacity="0.67"/><rect x="985.2" y="153.6" width="5" height="4.4" fill="#e8ad21" opacity="0.33"/><rect x="1071.3" y="155.6" width="5" height="2.4" fill="#e8ad21" opacity="0.28"/><rect x="1157.5" y="146.3" width="5" height="11.7" fill="#e8ad21" opacity="0.51"/>
-  <rect x="204.3" y="170" width="6" height="11" fill="#e8ad21">
+  <rect x="225.6" y="170" width="6" height="11" fill="#e8ad21">
     <animate attributeName="opacity" values="1;0" dur="1.05s" repeatCount="indefinite"/>
   </rect>
 </svg>

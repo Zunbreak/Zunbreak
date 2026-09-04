@@ -61,8 +61,8 @@ def main() -> None:
         fail("SVG must not contain JavaScript.")
     if "graphScan" in svg:
         fail("SVG must not include the graph scan.")
-    if "Knock, knock." not in svg:
-        fail("SVG must include the terminal knock line.")
+    if "C:\\Zunbreak" not in svg or "Knock, knock." not in svg:
+        fail("SVG must include the C:\\Zunbreak terminal knock line.")
     for banned in ("Neo", "NEO", "Matrix", "MATRIX", "rabbit", "C:\\Users"):
         if banned in svg:
             fail(f"SVG must stay subtle; found {banned}.")

@@ -40,7 +40,7 @@ const CONFIG = {
     y: 180,
     size: 10,
     tracking: 1.1,
-    prompt: "ZUNBREAK>",
+    prompt: "C:\\Zunbreak>",
     message: "Knock, knock.",
     cursorWidth: 6,
     cursorHeight: 11,
