@@ -2,10 +2,6 @@
 
 <img src="./assets/zunbreak-hero.gif" width="100%" alt="Zunbreak — creative technology studio" />
 
-<br />
-
-<img src="./assets/zunbreak-activity.svg" width="100%" alt="Zunbreak public GitHub activity signal" />
-
 </div>
 
 ### Behind Zunbreak

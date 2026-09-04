@@ -26,8 +26,8 @@ def main() -> None:
         fail("README still displays the static SVG hero instead of the lab GIF.")
     if not re.search(r'src=["\']\./assets/zunbreak-hero\.gif["\']', readme):
         fail("README must display ./assets/zunbreak-hero.gif.")
-    if not re.search(r'src=["\']\./assets/zunbreak-activity\.svg["\']', readme):
-        fail("README must keep the activity field as a separate SVG.")
+    if re.search(r'src=["\']\./assets/zunbreak-activity\.svg["\']', readme):
+        fail("README still shows the activity dashboard; it should not be on the profile.")
 
     if not SETTINGS.is_file():
         fail("Lab settings JSON is missing: assets/zunbreak-profile-settings.json")
@@ -99,7 +99,7 @@ def main() -> None:
 
     print(
         f"OK: README uses lab GIF ({width}x{height}, {frames} frames); "
-        f"right-side gold {gold_ratio:.4f}; loop seam ratio {ratio:.2f}; activity SVG kept separate."
+        f"right-side gold {gold_ratio:.4f}; loop seam ratio {ratio:.2f}."
     )
 
 
