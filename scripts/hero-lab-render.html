@@ -226,7 +226,7 @@
 
     function renderBrand(target, config) {
       const title = (config.titleText || "").trim().toUpperCase() || "ZUNBREAK";
-      const subtitle = (config.subtitleText || "").trim().toUpperCase();
+      const subtitle = (config.subtitleText || "").trim();
       target.save();
       target.textBaseline = "alphabetic";
       target.shadowColor = "rgba(0,0,0,.72)";

@@ -36,8 +36,8 @@ def main() -> None:
         fail("Settings JSON is not a Zunbreak profile lab export.")
     if payload.get("settings", {}).get("titleText", "").upper() != "ZUNBREAK":
         fail("Lab settings must keep the ZUNBREAK title.")
-    if payload.get("settings", {}).get("subtitleText", "").strip():
-        fail("Lab settings still have subtitle text; the hero should only say ZUNBREAK.")
+    if payload.get("settings", {}).get("subtitleText", "").strip() != "Securing the Human Link":
+        fail("Hero subtitle must be 'Securing the Human Link'.")
 
     if not GIF.is_file():
         fail("Animated hero GIF is missing: assets/zunbreak-hero.gif")
