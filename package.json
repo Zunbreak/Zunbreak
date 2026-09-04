@@ -1,0 +1,11 @@
+{
+  "name": "zunbreak-profile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render-hero": "node scripts/render-hero-gif.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.10.0"
+  }
+}

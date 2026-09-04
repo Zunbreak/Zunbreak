@@ -1,0 +1,20 @@
+{
+  "schema": "zunbreak-profile-lab/v1",
+  "canvas": {
+    "width": 1200,
+    "height": 400,
+    "durationSeconds": 6
+  },
+  "settings": {
+    "amplitude": 10,
+    "tempo": 0.5,
+    "density": 1.7,
+    "glow": 2,
+    "rings": 50,
+    "particles": 100,
+    "exposure": 85,
+    "preset": "custom",
+    "titleText": "ZUNBREAK",
+    "subtitleText": ""
+  }
+}
