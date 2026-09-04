@@ -118,7 +118,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="270" v
     <text x="48" y="57" fill="#e6ad24" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" letter-spacing="2">ACTIVITY / 14D</text>
     <line x1="48" y1="210" x2="260" y2="210" stroke="#252b33"/>
     ${activityBars}
-    <circle cx="50" cy="230" r="4" fill="#f2b82b"/><text x="62" y="234" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="1">${signalState}</text>
+    <circle cx="50" cy="230" r="4" fill="#f2b82b"><animate attributeName="opacity" values="1;0.25;1" dur="2.2s" repeatCount="indefinite"/></circle><text x="62" y="234" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="1">${signalState}</text>
   </g>
 
   <g>
@@ -126,8 +126,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="270" v
     <text x="336" y="57" fill="#e6ad24" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" letter-spacing="2">LAST PUBLIC PUSH</text>
     <circle cx="443" cy="127" r="45" fill="none" stroke="#5c4617"/>
     <circle cx="443" cy="127" r="28" fill="none" stroke="#9c7218"/>
-    <circle cx="443" cy="127" r="7" fill="#f2b82b"/>
-    <circle cx="443" cy="127" r="9" fill="#f2b82b" opacity="0.45" filter="url(#glow)"/>
+    <circle cx="443" cy="127" r="7" fill="#f2b82b"><animate attributeName="r" values="6;8.5;6" dur="1.8s" repeatCount="indefinite"/></circle>
+    <circle cx="443" cy="127" r="9" fill="#f2b82b" opacity="0.45" filter="url(#glow)"><animate attributeName="opacity" values="0.18;0.75;0.18" dur="1.8s" repeatCount="indefinite"/></circle>
     <text x="443" y="200" text-anchor="middle" fill="#f2f4f7" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="1">${dateLabel}</text>
     <text x="443" y="222" text-anchor="middle" fill="#6e7681" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="2">${timeLabel}</text>
   </g>
