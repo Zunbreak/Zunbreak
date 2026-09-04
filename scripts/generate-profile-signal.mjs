@@ -20,47 +20,33 @@ const CONFIG = {
     graph: "#e8ad21",
   },
   labels: {
-    signal: "SIGNAL / 14D",
-    latest: "LATEST SIGNAL",
-    lastPublic: "LAST PUBLIC PUSH",
-    state: "STATE",
-    quiet: "QUIET",
-    privateSignal: "PRIVATE SIGNAL",
+    contributions: "CONTRIBUTIONS · LAST 14 DAYS",
+    latestActivity: "LATEST ACTIVITY",
+    latestPublicPush: "LATEST PUBLIC PUSH",
+    empty: "—",
+    privateNote: "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS",
   },
-  state: {
-    calmMax: 6,
-    activeMax: 34,
-    labels: {
-      CALM: "CALM",
-      ACTIVE: "ACTIVE",
-      SURGE: "SURGE",
-    },
-    colors: {
-      CALM: "#8b949e",
-      ACTIVE: "#e8ad21",
-      SURGE: "#f4f1e9",
-    },
-  },
+  months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
   graph: {
     x0: 40,
     x1: 1160,
-    yBase: 168,
-    amplitude: 92,
-    barWidth: 10,
-    lineOpacity: 0.22,
-    areaOpacity: 0.06,
+    yBase: 158,
+    amplitude: 18,
+    barWidth: 5,
+    lineOpacity: 0.28,
+    areaOpacity: 0.05,
   },
   type: {
     labelSize: 11,
-    labelTracking: 2,
+    labelTracking: 1.6,
     valueSize: 42,
-    dateSize: 18,
-    publicSize: 16,
-    stateSize: 32,
-    captionSize: 10,
+    dateSize: 22,
+    publicSize: 18,
+    captionSize: 9,
+    captionTracking: 1.8,
     family: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
   },
-  maxPublicChars: 28,
+  maxPublicChars: 36,
 };
 
 const username = process.env.GITHUB_USERNAME || CONFIG.username;
@@ -90,28 +76,16 @@ function dayKey(value) {
 }
 
 function formatDate(value) {
-  if (!value) return CONFIG.labels.quiet;
+  if (!value) return CONFIG.labels.empty;
   const date = new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
-  if (Number.isNaN(date.getTime())) return CONFIG.labels.quiet;
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  })
-    .format(date)
-    .toUpperCase();
+  if (Number.isNaN(date.getTime())) return CONFIG.labels.empty;
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${day} ${CONFIG.months[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 
 function clip(value, max) {
   const text = String(value);
   return text.length <= max ? text : `${text.slice(0, Math.max(max - 1, 1))}…`;
-}
-
-function stateFromTotal(total) {
-  if (total <= CONFIG.state.calmMax) return CONFIG.state.labels.CALM;
-  if (total <= CONFIG.state.activeMax) return CONFIG.state.labels.ACTIVE;
-  return CONFIG.state.labels.SURGE;
 }
 
 async function getJson(url) {
@@ -158,12 +132,15 @@ const query = `
   }
 `;
 
-const [graph, eventPages] = await Promise.all([
+const [graph, eventPages, publicRepos] = await Promise.all([
   graphql(query, { login: username, from: from.toISOString(), to: to.toISOString() }),
   Promise.all(
     [1, 2, 3].map((page) =>
       getJson(`https://api.github.com/users/${encodeURIComponent(username)}/events/public?per_page=100&page=${page}`),
     ),
+  ),
+  getJson(
+    `https://api.github.com/users/${encodeURIComponent(username)}/repos?type=public&sort=pushed&per_page=20`,
   ),
 ]);
 
@@ -179,7 +156,7 @@ const lastFourteen = Array.from({ length: CONFIG.days }, (_, index) => {
 });
 
 const calendarTotal = Number(collection?.contributionCalendar?.totalContributions);
-const signalTotal = Number.isFinite(calendarTotal)
+const contributionTotal = Number.isFinite(calendarTotal)
   ? calendarTotal
   : lastFourteen.reduce((sum, day) => sum + day.contributionCount, 0);
 const restrictedCount = Number(collection?.restrictedContributionsCount ?? 0);
@@ -190,19 +167,20 @@ const latestRestricted = collection?.latestRestrictedContributionDate
 const publicPush = eventPages
   .flat()
   .find((event) => event?.type === "PushEvent" && event?.repo?.name);
-const publicRepo = publicPush?.repo?.name || "";
-const publicPushAt = publicPush?.created_at || null;
+const latestPublicRepo = Array.isArray(publicRepos)
+  ? publicRepos.find((repo) => repo?.name && repo.private !== true && !repo.fork)
+  : null;
+
+const publicRepo = publicPush?.repo?.name || (latestPublicRepo ? `${latestPublicRepo.owner?.login || username}/${latestPublicRepo.name}` : "");
+const publicPushAt = publicPush?.created_at || latestPublicRepo?.pushed_at || null;
 
 const latestCalendarDay = [...lastFourteen].reverse().find((day) => day.contributionCount > 0)?.date || null;
-const latestSignalDate =
+const latestActivityDate =
   [latestCalendarDay, latestRestricted, publicPushAt ? dayKey(publicPushAt) : null]
     .filter(Boolean)
     .sort()
     .at(-1) || null;
-const latestIsPrivate = Boolean(latestRestricted) && latestSignalDate === latestRestricted;
 
-const state = stateFromTotal(signalTotal);
-const stateColor = CONFIG.state.colors[state] || CONFIG.colors.gold;
 const maxDaily = Math.max(...lastFourteen.map((day) => day.contributionCount), 1);
 const { x0, x1, yBase, amplitude, barWidth, lineOpacity, areaOpacity } = CONFIG.graph;
 const span = Math.max(CONFIG.days - 1, 1);
@@ -217,39 +195,35 @@ const polyline = points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(
 const area = `${x0},${yBase} ${polyline} ${x1},${yBase}`;
 const graphBars = points
   .map((point) => {
-    const height = Math.max(3, yBase - point.y);
-    const opacity = point.count === 0 ? 0.14 : 0.28 + (point.count / maxDaily) * 0.5;
+    const height = Math.max(2, yBase - point.y);
+    const opacity = point.count === 0 ? 0.12 : 0.22 + (point.count / maxDaily) * 0.45;
     return `<rect x="${(point.x - barWidth / 2).toFixed(1)}" y="${point.y.toFixed(1)}" width="${barWidth}" height="${height.toFixed(1)}" fill="${CONFIG.colors.graph}" opacity="${opacity.toFixed(2)}"/>`;
   })
   .join("");
 
 const lastPublicValue = publicRepo
-  ? `${clip(publicRepo, CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
-  : CONFIG.labels.quiet;
-const latestCaption = latestIsPrivate ? CONFIG.labels.privateSignal : "";
+  ? `${clip(publicRepo.toUpperCase(), CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
+  : CONFIG.labels.empty;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" height="${CONFIG.height}" viewBox="0 0 ${CONFIG.width} ${CONFIG.height}" role="img" aria-labelledby="title description">
-  <title id="title">Zunbreak GitHub activity signal</title>
-  <desc id="description">Fourteen-day contribution signal, latest activity date, last public push and activity state.</desc>
+  <title id="title">Zunbreak GitHub activity</title>
+  <desc id="description">Fourteen-day contributions, latest activity date and latest public push.</desc>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
-  <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
-  <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.5" opacity="${lineOpacity}"/>
-  ${graphBars}
-  <line x1="300" y1="26" x2="300" y2="142" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
-  <line x1="600" y1="26" x2="600" y2="142" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
-  <line x1="900" y1="26" x2="900" y2="142" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
+  <line x1="400" y1="28" x2="400" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
+  <line x1="800" y1="28" x2="800" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <g font-family="${CONFIG.type.family}">
-    <text x="36" y="48" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.signal)}</text>
-    <text x="36" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}" font-weight="700">${escapeXml(String(signalTotal).padStart(2, "0"))}</text>
-    <text x="328" y="48" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latest)}</text>
-    <text x="328" y="96" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestSignalDate))}</text>
-    ${latestCaption ? `<text x="328" y="118" fill="${CONFIG.colors.muted}" font-size="${CONFIG.type.captionSize}" letter-spacing="1.4">${escapeXml(latestCaption)}</text>` : ""}
-    <text x="628" y="48" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.lastPublic)}</text>
-    <text x="628" y="96" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
-    <text x="928" y="48" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.state)}</text>
-    <text x="928" y="108" fill="${stateColor}" font-size="${CONFIG.type.stateSize}" font-weight="700">${escapeXml(state)}</text>
+    <text x="36" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.contributions)}</text>
+    <text x="36" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}" font-weight="700">${escapeXml(String(contributionTotal))}</text>
+    <text x="428" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestActivity)}</text>
+    <text x="428" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
+    <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
+    <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
   </g>
+  <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
+  <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
+  ${graphBars}
+  <text x="36" y="178" fill="${CONFIG.colors.muted}" font-family="${CONFIG.type.family}" font-size="${CONFIG.type.captionSize}" letter-spacing="${CONFIG.type.captionTracking}">${escapeXml(CONFIG.labels.privateNote)}</text>
 </svg>
 `;
 
@@ -264,5 +238,5 @@ try {
 }
 if (previous !== next) await writeFile(out, next, "utf8");
 console.log(
-  `Profile signal ${previous === next ? "unchanged" : "updated"}: ${signalTotal} contributions, ${state}, restricted=${restrictedCount}`,
+  `Profile signal ${previous === next ? "unchanged" : "updated"}: ${contributionTotal} contributions, restricted=${restrictedCount}`,
 );

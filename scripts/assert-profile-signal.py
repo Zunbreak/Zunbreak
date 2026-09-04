@@ -36,14 +36,13 @@ def main() -> None:
     source = GENERATOR.read_text(encoding="utf-8")
     if "const CONFIG" not in source:
         fail("Generator must keep editable design values in a CONFIG object.")
-    if "calmMax" not in source or "activeMax" not in source:
-        fail("CONFIG must expose CALM/ACTIVE/SURGE thresholds.")
     if re.search(r"totalContributions\s*\+\s*restricted", source):
         fail("Do not add restrictedContributionsCount on top of totalContributions.")
-    if "PRIVATE PUSH" in source:
-        fail("Private activity must not be labeled PRIVATE PUSH.")
-    if "PRIVATE SIGNAL" not in source and "PRIVATE ACTIVITY" not in source:
-        fail("Private activity must be labeled PRIVATE SIGNAL or PRIVATE ACTIVITY.")
+    for banned in ("PRIVATE PUSH", "QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL"):
+        if banned in source:
+            fail(f"Generator still contains removed terminology: {banned}.")
+    if '"STATE"' in source or "calmMax" in source:
+        fail("Generator must not keep STATE or CALM/ACTIVE/SURGE thresholds.")
 
     if not WORKFLOW.is_file():
         fail("Missing .github/workflows/update-profile-signal.yml")
@@ -60,14 +59,21 @@ def main() -> None:
         fail("SVG must use viewBox 0 0 1200 190.")
     if "<script" in svg.lower() or "<animate" in svg.lower():
         fail("SVG must not contain JavaScript or animation.")
-    for label in ("SIGNAL / 14D", "LATEST SIGNAL", "LAST PUBLIC PUSH", "STATE"):
+    for label in (
+        "CONTRIBUTIONS · LAST 14 DAYS",
+        "LATEST ACTIVITY",
+        "LATEST PUBLIC PUSH",
+        "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS",
+    ):
         if label not in svg:
             fail(f"SVG is missing {label}.")
-    if "PRIVATE PUSH" in svg:
-        fail("SVG must not say PRIVATE PUSH.")
-    if "http" in svg and "xmlns" in svg:
-        if re.search(r"href=[\"']https?://", svg):
-            fail("SVG must not load external assets.")
+    for banned in ("QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL", "PRIVATE PUSH"):
+        if banned in svg:
+            fail(f"SVG still contains removed terminology: {banned}.")
+    if re.search(r">STATE<", svg):
+        fail("SVG must not show a STATE column.")
+    if re.search(r"href=[\"']https?://", svg):
+        fail("SVG must not load external assets.")
 
     print("OK: profile signal SVG, generator CONFIG, workflow and README placement.")
 
