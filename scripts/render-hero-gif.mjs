@@ -50,9 +50,11 @@ await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const { port } = server.address();
 const payload = JSON.parse(await readFile(settingsPath, "utf8"));
 const settings = payload.settings;
-const duration = Number(payload.canvas?.durationSeconds || 6);
 const fps = 12;
-const frameCount = Math.round(duration * fps);
+const naturalPeriod = 4.8 / Math.max(Number(settings.tempo) || 0.2, 0.2);
+const frameCount = Math.round(naturalPeriod * fps);
+const loopPeriod = frameCount / fps;
+settings.loopPeriod = loopPeriod;
 
 const browser = await puppeteer.launch({
   executablePath: edgePath,
@@ -66,12 +68,21 @@ try {
   await page.goto(`http://127.0.0.1:${port}/scripts/hero-lab-render.html`, { waitUntil: "networkidle0" });
   await page.waitForFunction(() => window.HERO_READY === true);
   await page.evaluate((next) => window.setHeroSettings(next), settings);
+  const startFrame = await page.evaluate((time) => window.renderHeroFrame(time), 0);
+  const wrapFrame = await page.evaluate((time) => window.renderHeroFrame(time), loopPeriod);
+  if (startFrame !== wrapFrame) {
+    throw new Error("hero animation is not seamless: t=0 and t=loopPeriod differ");
+  }
+  console.log(`Seamless loop ${loopPeriod.toFixed(3)}s at ${fps} fps (${frameCount} frames)`);
 
   await rm(framesDir, { recursive: true, force: true });
   await mkdir(framesDir, { recursive: true });
 
   for (let index = 0; index < frameCount; index++) {
-    const dataUrl = await page.evaluate((time) => window.renderHeroFrame(time), index / fps);
+    const dataUrl = await page.evaluate(
+      (time) => window.renderHeroFrame(time),
+      (index * loopPeriod) / frameCount,
+    );
     const buffer = Buffer.from(dataUrl.split(",", 2)[1], "base64");
     await writeFile(join(framesDir, `frame_${String(index).padStart(3, "0")}.png`), buffer);
     if ((index + 1) % 12 === 0) console.log(`Rendered ${index + 1}/${frameCount}`);

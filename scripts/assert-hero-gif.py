@@ -67,9 +67,35 @@ def main() -> None:
     if gold_ratio < 0.004:
         fail(f"Hero GIF is missing the daemon/gold signal ({gold_ratio:.5f}).")
 
+    def frame(index: int):
+        image.seek(index)
+        return image.convert("RGB")
+
+    def mean_abs_diff(first, second, box):
+        a = first.crop(box)
+        b = second.crop(box)
+        pixels_a, pixels_b = a.load(), b.load()
+        width_, height_ = a.size
+        total = 0
+        for y in range(height_):
+            for x in range(width_):
+                ca, cb = pixels_a[x, y], pixels_b[x, y]
+                total += abs(ca[0] - cb[0]) + abs(ca[1] - cb[1]) + abs(ca[2] - cb[2])
+        return total / (width_ * height_ * 3)
+
+    signal = (360, 180, 840, 360)
+    step = mean_abs_diff(frame(0), frame(1), signal)
+    seam = mean_abs_diff(frame(frames - 1), frame(0), signal)
+    ratio = seam / max(step, 1e-6)
+    if ratio > 1.45:
+        fail(
+            f"GIF loop seam is visible in the signal field "
+            f"(last-to-first {seam:.3f} vs frame step {step:.3f}, ratio {ratio:.2f})."
+        )
+
     print(
         f"OK: README uses lab GIF ({width}x{height}, {frames} frames); "
-        f"right-side gold {gold_ratio:.4f}; activity SVG kept separate."
+        f"right-side gold {gold_ratio:.4f}; loop seam ratio {ratio:.2f}; activity SVG kept separate."
     )
 
 
