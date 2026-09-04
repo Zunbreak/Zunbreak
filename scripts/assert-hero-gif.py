@@ -24,7 +24,7 @@ def main() -> None:
     readme = README.read_text(encoding="utf-8")
     if re.search(r'src=["\']\./assets/zunbreak-hero\.svg["\']', readme):
         fail("README still displays the static SVG hero instead of the lab GIF.")
-    if not re.search(r'src=["\']\./assets/zunbreak-hero\.gif["\']', readme):
+    if not re.search(r'src=["\']\./assets/zunbreak-hero\.gif(?:\?[^"\']*)?["\']', readme):
         fail("README must display ./assets/zunbreak-hero.gif.")
     if re.search(r'src=["\']\./assets/zunbreak-activity\.svg["\']', readme):
         fail("README still shows the activity dashboard; it should not be on the profile.")
