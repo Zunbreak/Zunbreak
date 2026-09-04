@@ -171,7 +171,8 @@
         let outwardPulse = 0;
         for (const pulsePhase of pulsePhases) {
           const distance = radialProgress - pulsePhase;
-          const pulse = Math.exp(-(distance * distance) / .008) * (1 - pulsePhase * .24);
+          const born = Math.sin(Math.PI * pulsePhase);
+          const pulse = Math.exp(-(distance * distance) / .014) * born;
           outwardPulse = Math.max(outwardPulse, pulse);
         }
         const envelope = .14 + .86 * outwardPulse;
