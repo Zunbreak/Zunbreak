@@ -87,6 +87,29 @@ def main() -> None:
     if re.search(r"href=[\"']https?://", svg):
         fail("SVG must not load external assets.")
 
+    value_ys = re.findall(
+        r'<text x="(?:36|428|828)" y="(\d+(?:\.\d+)?)" fill="#f4f1e9"',
+        svg,
+    )
+    if len(value_ys) != 3:
+        fail(f"Expected three metric values, found {len(value_ys)}: {value_ys}")
+    if len(set(value_ys)) != 1:
+        fail(f"Contribution, latest activity and latest public push must share one baseline y, got {value_ys}")
+    value_sizes = re.findall(
+        r'<text x="(?:36|428|828)" y="(?:\d+(?:\.\d+)?)" fill="#f4f1e9" font-size="(\d+(?:\.\d+)?)"',
+        svg,
+    )
+    if len(value_sizes) != 3:
+        fail(f"Expected three metric font sizes, found {len(value_sizes)}: {value_sizes}")
+    if len(set(value_sizes)) != 1:
+        fail(f"Metric values must share one font size, got {value_sizes}")
+    if "dateY" in source or "dateSize" in source or "publicSize" in source:
+        fail("Generator must use one valueY and one valueSize for all three metric values.")
+    if source.count("${CONFIG.type.valueY}") < 3:
+        fail("All three metric values must use CONFIG.type.valueY.")
+    if source.count("${CONFIG.type.valueSize}") < 3:
+        fail("All three metric values must use CONFIG.type.valueSize.")
+
     print("OK: profile signal SVG, generator CONFIG, workflow and README placement.")
 
 

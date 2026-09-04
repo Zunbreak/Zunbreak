@@ -51,11 +51,8 @@ const CONFIG = {
   type: {
     labelSize: 14,
     labelTracking: 1.6,
-    valueSize: 42,
-    dateSize: 22,
-    publicSize: 18,
-    valueY: 108,
-    dateY: 94,
+    valueSize: 30,
+    valueY: 94,
     dividerTop: 28,
     dividerBottom: 102,
     family: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
@@ -267,9 +264,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="36" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.contributions)}</text>
     <text x="36" y="${CONFIG.type.valueY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}" font-weight="700">${escapeXml(String(contributionTotal))}</text>
     <text x="428" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestActivity)}</text>
-    <text x="428" y="${CONFIG.type.dateY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
+    <text x="428" y="${CONFIG.type.valueY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}">${escapeXml(formatDate(latestActivityDate))}</text>
     <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
-    <text x="828" y="${CONFIG.type.dateY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
+    <text x="828" y="${CONFIG.type.valueY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}">${escapeXml(lastPublicValue)}</text>
     <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" calcMode="${CONFIG.terminal.calcMode}" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <path d="${areaPath}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
