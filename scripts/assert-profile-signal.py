@@ -68,6 +68,8 @@ def main() -> None:
             fail(f"SVG must stay subtle; found {banned}.")
     if svg.lower().count("<animate") != 1 or 'attributeName="opacity"' not in svg:
         fail("SVG should keep a single blinking terminal cursor.")
+    if 'calcMode="discrete"' not in svg:
+        fail("Cursor must snap on/off, not fade.")
     for label in (
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",

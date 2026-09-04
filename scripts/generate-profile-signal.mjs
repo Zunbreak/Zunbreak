@@ -44,6 +44,7 @@ const CONFIG = {
     message: "Knock, knock.",
     cursorDx: 3,
     duration: "1.05s",
+    calcMode: "discrete",
   },
   type: {
     labelSize: 11,
@@ -228,7 +229,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     <text x="428" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
     <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
     <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
-    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" repeatCount="indefinite"/>█</tspan></text>
+    <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" calcMode="${CONFIG.terminal.calcMode}" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
   <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
