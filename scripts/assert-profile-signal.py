@@ -21,7 +21,7 @@ def fail(message: str) -> None:
 def main() -> None:
     readme = README.read_text(encoding="utf-8")
     gif = re.search(r'src=["\']\./assets/zunbreak-hero\.gif["\']', readme)
-    signal = re.search(r'src=["\']\./assets/profile-signal\.svg["\']', readme)
+    signal = re.search(r'src=["\']\./assets/profile-signal\.svg(?:\?[^"\']*)?["\']', readme)
     if not gif:
         fail("README must keep the existing hero GIF.")
     if not signal:
