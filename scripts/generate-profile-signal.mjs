@@ -43,7 +43,7 @@ const CONFIG = {
     prompt: "C:\\Zunbreak>",
     message: "Knock, knock.",
     cursorDx: 3,
-    duration: "1.8s",
+    duration: "1.05s",
   },
   type: {
     labelSize: 11,
