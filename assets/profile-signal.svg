@@ -20,11 +20,11 @@
   <line x1="800" y1="28" x2="800" y2="102" stroke="#252b33" stroke-width="1"/>
   <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
     <text x="36" y="52" fill="#e8ad21" font-size="14" letter-spacing="1.6">CONTRIBUTIONS · LAST 14 DAYS</text>
-    <text x="36" y="94" fill="#f4f1e9" font-size="30" font-weight="700">144</text>
+    <text x="36" y="94" fill="#f4f1e9" font-size="22" font-weight="700">144</text>
     <text x="428" y="52" fill="#e8ad21" font-size="14" letter-spacing="1.6">LATEST ACTIVITY</text>
-    <text x="428" y="94" fill="#f4f1e9" font-size="30">04 SEP 2026</text>
+    <text x="428" y="94" fill="#f4f1e9" font-size="22">04 SEP 2026</text>
     <text x="828" y="52" fill="#e8ad21" font-size="14" letter-spacing="1.6">LATEST PUBLIC PUSH</text>
-    <text x="828" y="94" fill="#f4f1e9" font-size="30">ZUNBREAK/ZUNBREAK · 04 SEP 2026</text>
+    <text x="828" y="94" fill="#f4f1e9" font-size="22">ZUNBREAK/ZUNBREAK · 04 SEP 2026</text>
     <text x="36" y="182" fill="#e8ad21" font-size="13" letter-spacing="0.35" font-weight="600">C:\Zunbreak&gt; Knock, knock.<tspan dx="3"><animate attributeName="opacity" values="1;0" dur="1.05s" calcMode="discrete" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <path d="M 40.0 158.0 C 54.4 158.0 97.4 158.0 126.2 158.0 C 154.9 158.0 183.6 158.0 212.3 158.0 C 241.0 156.3 269.7 147.7 298.5 147.7 C 327.2 147.7 355.9 156.5 384.6 158.0 C 413.3 158.0 442.1 156.4 470.8 156.4 C 499.5 156.4 528.2 157.7 556.9 158.0 C 585.6 158.0 614.4 158.0 643.1 158.0 C 671.8 158.0 700.5 158.0 729.2 158.0 C 757.9 154.7 786.7 143.1 815.4 138.2 C 844.1 133.3 872.8 126.6 901.5 128.7 C 930.3 130.8 959.0 146.6 987.7 150.9 C 1016.4 155.1 1045.1 158.0 1073.8 154.0 C 1102.6 148.2 1145.6 122.3 1160.0 116.0 L 1160.0 158 L 40.0 158 Z" fill="#e8ad21" opacity="0.12"/>

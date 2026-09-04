@@ -51,7 +51,7 @@ const CONFIG = {
   type: {
     labelSize: 14,
     labelTracking: 1.6,
-    valueSize: 30,
+    valueSize: 22,
     valueY: 94,
     dividerTop: 28,
     dividerBottom: 102,
