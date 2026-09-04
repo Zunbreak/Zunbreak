@@ -110,6 +110,27 @@ def main() -> None:
     if source.count("${CONFIG.type.valueSize}") < 3:
         fail("All three metric values must use CONFIG.type.valueSize.")
 
+    public = re.search(
+        r'<text x="828" y="(?:\d+(?:\.\d+)?)" fill="#f4f1e9" font-size="(\d+(?:\.\d+)?)">(.*?)</text>',
+        svg,
+    )
+    if not public:
+        fail("SVG is missing the latest public push value.")
+    public_size = float(public.group(1))
+    public_text = (
+        public.group(2)
+        .replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&apos;", "'")
+    )
+    public_right = 828 + len(public_text) * public_size * 0.6
+    if public_right > 1164:
+        fail(
+            f"Latest public push must stay inside the panel, {public_text!r} extends to x={public_right:.0f}."
+        )
+
     print("OK: profile signal SVG, generator CONFIG, workflow and README placement.")
 
 

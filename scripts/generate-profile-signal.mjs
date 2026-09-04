@@ -99,6 +99,16 @@ function clip(value, max) {
   return text.length <= max ? text : `${text.slice(0, Math.max(max - 1, 1))}…`;
 }
 
+function publicPushValue(repo, at) {
+  if (!repo) return CONFIG.labels.empty;
+  const prefix = `${username}/`;
+  const name = repo.toUpperCase().startsWith(prefix.toUpperCase()) ? repo.slice(prefix.length) : repo;
+  const date = formatDate(at);
+  const line = date === CONFIG.labels.empty ? name.toUpperCase() : `${name.toUpperCase()} · ${date}`;
+  const columnChars = Math.max(1, Math.floor((CONFIG.width - 828 - 36) / (CONFIG.type.valueSize * 0.6)));
+  return clip(line, Math.min(CONFIG.maxPublicChars, columnChars));
+}
+
 function catmullRomPath(points, yMax) {
   if (points.length === 0) return "";
   const at = (index) => points[Math.max(0, Math.min(points.length - 1, index))];
@@ -234,9 +244,7 @@ const graphBars = points
   })
   .join("");
 
-const lastPublicValue = publicRepo
-  ? `${clip(publicRepo.toUpperCase(), CONFIG.maxPublicChars)} · ${formatDate(publicPushAt)}`
-  : CONFIG.labels.empty;
+const lastPublicValue = publicPushValue(publicRepo, publicPushAt);
 
 const terminalLine = `${CONFIG.terminal.prompt} ${CONFIG.terminal.message}`;
 
