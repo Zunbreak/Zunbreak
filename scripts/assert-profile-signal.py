@@ -38,7 +38,7 @@ def main() -> None:
         fail("Generator must keep editable design values in a CONFIG object.")
     if re.search(r"totalContributions\s*\+\s*restricted", source):
         fail("Do not add restrictedContributionsCount on top of totalContributions.")
-    for banned in ("PRIVATE PUSH", "QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL"):
+    for banned in ("PRIVATE PUSH", "QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL", "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS"):
         if banned in source:
             fail(f"Generator still contains removed terminology: {banned}.")
     if '"STATE"' in source or "calmMax" in source:
@@ -63,10 +63,11 @@ def main() -> None:
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",
         "LATEST PUBLIC PUSH",
-        "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS",
     ):
         if label not in svg:
             fail(f"SVG is missing {label}.")
+    if "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS" in svg:
+        fail("SVG must not show the private-contributions footnote.")
     for banned in ("QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL", "PRIVATE PUSH"):
         if banned in svg:
             fail(f"SVG still contains removed terminology: {banned}.")

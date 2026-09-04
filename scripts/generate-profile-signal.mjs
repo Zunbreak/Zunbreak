@@ -24,7 +24,6 @@ const CONFIG = {
     latestActivity: "LATEST ACTIVITY",
     latestPublicPush: "LATEST PUBLIC PUSH",
     empty: "—",
-    privateNote: "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS",
   },
   months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
   graph: {
@@ -42,8 +41,6 @@ const CONFIG = {
     valueSize: 42,
     dateSize: 22,
     publicSize: 18,
-    captionSize: 9,
-    captionTracking: 1.8,
     family: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
   },
   maxPublicChars: 36,
@@ -223,7 +220,6 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
   <polygon points="${area}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
   <polyline points="${polyline}" fill="none" stroke="${CONFIG.colors.graph}" stroke-width="1.25" opacity="${lineOpacity}"/>
   ${graphBars}
-  <text x="36" y="178" fill="${CONFIG.colors.muted}" font-family="${CONFIG.type.family}" font-size="${CONFIG.type.captionSize}" letter-spacing="${CONFIG.type.captionTracking}">${escapeXml(CONFIG.labels.privateNote)}</text>
 </svg>
 `;
 
