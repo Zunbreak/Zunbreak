@@ -30,7 +30,7 @@ const CONFIG = {
     x0: 40,
     x1: 1160,
     yBase: 158,
-    amplitude: 28,
+    amplitude: 42,
     lineWidth: 1.25,
     areaOpacity: 0.12,
     barWidth: 5,
@@ -54,6 +54,10 @@ const CONFIG = {
     valueSize: 42,
     dateSize: 22,
     publicSize: 18,
+    valueY: 108,
+    dateY: 94,
+    dividerTop: 28,
+    dividerBottom: 102,
     family: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
   },
   maxPublicChars: 36,
@@ -257,15 +261,15 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
   </defs>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
-  <line x1="400" y1="28" x2="400" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
-  <line x1="800" y1="28" x2="800" y2="128" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
+  <line x1="400" y1="${CONFIG.type.dividerTop}" x2="400" y2="${CONFIG.type.dividerBottom}" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
+  <line x1="800" y1="${CONFIG.type.dividerTop}" x2="800" y2="${CONFIG.type.dividerBottom}" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <g font-family="${CONFIG.type.family}">
     <text x="36" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.contributions)}</text>
-    <text x="36" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}" font-weight="700">${escapeXml(String(contributionTotal))}</text>
+    <text x="36" y="${CONFIG.type.valueY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.valueSize}" font-weight="700">${escapeXml(String(contributionTotal))}</text>
     <text x="428" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestActivity)}</text>
-    <text x="428" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
+    <text x="428" y="${CONFIG.type.dateY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.dateSize}">${escapeXml(formatDate(latestActivityDate))}</text>
     <text x="828" y="52" fill="${CONFIG.colors.gold}" font-size="${CONFIG.type.labelSize}" letter-spacing="${CONFIG.type.labelTracking}">${escapeXml(CONFIG.labels.latestPublicPush)}</text>
-    <text x="828" y="108" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
+    <text x="828" y="${CONFIG.type.dateY}" fill="${CONFIG.colors.text}" font-size="${CONFIG.type.publicSize}">${escapeXml(lastPublicValue)}</text>
     <text x="${CONFIG.terminal.x}" y="${CONFIG.terminal.y}" fill="${CONFIG.colors.gold}" font-size="${CONFIG.terminal.size}" letter-spacing="${CONFIG.terminal.tracking}" font-weight="600">${escapeXml(terminalLine)}<tspan dx="${CONFIG.terminal.cursorDx}"><animate attributeName="opacity" values="1;0" dur="${CONFIG.terminal.duration}" calcMode="${CONFIG.terminal.calcMode}" repeatCount="indefinite"/>█</tspan></text>
   </g>
   <path d="${areaPath}" fill="${CONFIG.colors.graph}" opacity="${areaOpacity}"/>
