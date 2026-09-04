@@ -235,25 +235,18 @@
       target.font = '700 68px "Arial Narrow", "Roboto Condensed", "Segoe UI", sans-serif';
       drawSpacedText(target, title, 57, 226, 7.5);
       if (subtitle) {
-        target.font = "700 16px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-        target.shadowBlur = 0;
-        target.lineJoin = "round";
-        target.lineWidth = 4;
-        target.strokeStyle = "rgba(2,3,4,.9)";
-        drawSpacedText(target, subtitle, 61, 266, 2.8, "stroke");
-        target.shadowColor = "rgba(0,0,0,.88)";
-        target.shadowBlur = 8;
-        target.fillStyle = "#f4f1e9";
-        drawSpacedText(target, subtitle, 61, 266, 2.8);
+        target.shadowBlur = 4;
+        target.fillStyle = "#dca51e";
+        target.font = "600 20px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+        drawSpacedText(target, subtitle, 61, 270, 3.2);
       }
       target.restore();
     }
 
-    function drawSpacedText(target, text, x, y, spacing, mode = "fill") {
+    function drawSpacedText(target, text, x, y, spacing) {
       let cursor = x;
       for (const character of text) {
-        if (mode === "stroke") target.strokeText(character, cursor, y);
-        else target.fillText(character, cursor, y);
+        target.fillText(character, cursor, y);
         cursor += target.measureText(character).width + spacing;
       }
     }
