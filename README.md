@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/zunbreak-hero.svg" width="100%" alt="Zunbreak — creative technology studio" />
+<img src="./assets/zunbreak-hero.png" width="100%" alt="Zunbreak — creative technology studio" />
 
 <br />
 
