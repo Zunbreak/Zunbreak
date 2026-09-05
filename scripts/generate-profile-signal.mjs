@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { contributionCalendarUrl, parseContributionCalendarHtml } from "./github-contribution-calendar.mjs";
 
 const CONFIG = {
   username: "Zunbreak",
@@ -136,6 +137,17 @@ async function getJson(url) {
   return response.json();
 }
 
+async function getPublicCalendar(login) {
+  const response = await fetch(contributionCalendarUrl(login), {
+    headers: {
+      Accept: "text/html",
+      "User-Agent": "zunbreak-profile-signal",
+    },
+  });
+  if (!response.ok) throw new Error(`GitHub contributions ${response.status}`);
+  return parseContributionCalendarHtml(await response.text());
+}
+
 async function graphql(query, variables) {
   if (!token) return null;
   const response = await fetch("https://api.github.com/graphql", {
@@ -174,7 +186,7 @@ const query = `
   }
 `;
 
-const [graph, eventPages, publicRepos] = await Promise.all([
+const [graph, eventPages, publicRepos, publicCalendar] = await Promise.all([
   graphql(query, { login: username, from: from.toISOString(), to: to.toISOString() }),
   Promise.all(
     [1, 2, 3].map((page) =>
@@ -184,6 +196,10 @@ const [graph, eventPages, publicRepos] = await Promise.all([
   getJson(
     `https://api.github.com/users/${encodeURIComponent(username)}/repos?type=public&sort=pushed&per_page=20`,
   ),
+  getPublicCalendar(username).catch((error) => {
+    console.warn(`Public contribution calendar unavailable (${error.message}); using GraphQL days.`);
+    return new Map();
+  }),
 ]);
 
 const collection = graph?.user?.contributionsCollection ?? null;
@@ -193,14 +209,22 @@ const calendarDays = (collection?.contributionCalendar?.weeks ?? [])
 
 const lastFourteen = Array.from({ length: CONFIG.days }, (_, index) => {
   const date = dayKey(now.getTime() - (CONFIG.days - 1 - index) * 86_400_000);
+  const htmlCount = publicCalendar.get(date);
   const match = calendarDays.find((day) => day.date === date);
-  return { date, contributionCount: Number(match?.contributionCount ?? 0) };
+  return {
+    date,
+    contributionCount: Number.isFinite(htmlCount) ? htmlCount : Number(match?.contributionCount ?? 0),
+  };
 });
+const usedPublicCalendar = lastFourteen.every((day) => publicCalendar.has(day.date));
 
+const htmlTotal = lastFourteen.reduce((sum, day) => sum + day.contributionCount, 0);
 const calendarTotal = Number(collection?.contributionCalendar?.totalContributions);
-const contributionTotal = Number.isFinite(calendarTotal)
-  ? calendarTotal
-  : lastFourteen.reduce((sum, day) => sum + day.contributionCount, 0);
+const contributionTotal = usedPublicCalendar
+  ? htmlTotal
+  : Number.isFinite(calendarTotal)
+    ? calendarTotal
+    : htmlTotal;
 const restrictedCount = Number(collection?.restrictedContributionsCount ?? 0);
 const latestRestricted = collection?.latestRestrictedContributionDate
   ? dayKey(collection.latestRestrictedContributionDate)
@@ -295,5 +319,5 @@ try {
 }
 if (previous !== next) await writeFile(out, next, "utf8");
 console.log(
-  `Profile signal ${previous === next ? "unchanged" : "updated"}: ${contributionTotal} contributions, restricted=${restrictedCount}`,
+  `Profile signal ${previous === next ? "unchanged" : "updated"}: ${contributionTotal} contributions, restricted=${restrictedCount}, calendar=${usedPublicCalendar ? "public-html" : "graphql"}`,
 );

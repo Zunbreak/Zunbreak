@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,6 +39,14 @@ def main() -> None:
         fail("Generator must keep editable design values in a CONFIG object.")
     if re.search(r"totalContributions\s*\+\s*restricted", source):
         fail("Do not add restrictedContributionsCount on top of totalContributions.")
+    if "github-contribution-calendar.mjs" not in source or "getPublicCalendar" not in source:
+        fail("Generator must read the public GitHub contribution calendar for daily bars.")
+    calendar_mod = ROOT / "scripts" / "github-contribution-calendar.mjs"
+    if not calendar_mod.is_file():
+        fail("Missing scripts/github-contribution-calendar.mjs")
+    calendar_source = calendar_mod.read_text(encoding="utf-8")
+    if "ContributionCalendar-day" not in calendar_source or "/contributions" not in calendar_source:
+        fail("Public calendar parser must read GitHub's public ContributionCalendar-day page.")
     for banned in ("PRIVATE PUSH", "QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL", "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS"):
         if banned in source:
             fail(f"Generator still contains removed terminology: {banned}.")
@@ -130,6 +139,15 @@ def main() -> None:
         fail(
             f"Latest public push must stay inside the panel, {public_text!r} extends to x={public_right:.0f}."
         )
+
+    calendar_test = subprocess.run(
+        ["node", str(ROOT / "scripts" / "assert-github-calendar.mjs")],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if calendar_test.returncode != 0:
+        fail(calendar_test.stderr.strip() or calendar_test.stdout.strip() or "calendar parser test failed")
 
     print("OK: profile signal SVG, generator CONFIG, workflow and README placement.")
 
