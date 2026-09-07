@@ -75,10 +75,14 @@ def main() -> None:
     for banned in ("Neo", "NEO", "Matrix", "MATRIX", "rabbit", "C:\\Users"):
         if banned in svg:
             fail(f"SVG must stay subtle; found {banned}.")
-    if svg.lower().count("<animate") != 1 or 'attributeName="opacity"' not in svg:
-        fail("SVG should keep a single blinking terminal cursor.")
+    if svg.lower().count("<animate") != 2:
+        fail("SVG should keep the live-dot pulse and the blinking terminal cursor.")
     if 'calcMode="discrete"' not in svg:
         fail("Cursor must snap on/off, not fade.")
+    if not re.search(r'<circle[^>]*fill="#e8ad21"', svg) or "0.32;0.92;0.32" not in svg:
+        fail("SVG must include the slow gold live-dot pulse.")
+    if "live:" not in source or "CONFIG.live" not in source:
+        fail("Generator must keep the live-dot in CONFIG.")
     for label in (
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",
