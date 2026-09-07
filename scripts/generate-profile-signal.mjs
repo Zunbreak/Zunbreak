@@ -39,11 +39,11 @@ const CONFIG = {
     glowBlur: 2.5,
   },
   live: {
-    cx: 28,
-    cy: 20,
-    r: 3,
-    duration: "3.2s",
-    opacity: "0.32;0.92;0.32",
+    x: 28,
+    y: 18,
+    r: 1.7,
+    orbit: 5.2,
+    duration: "3.6s",
   },
   terminal: {
     x: 36,
@@ -155,6 +155,21 @@ async function getPublicCalendar(login) {
   return parseContributionCalendarHtml(await response.text());
 }
 
+async function latestAuthoredPush(owner, repo) {
+  if (!owner || !repo) return null;
+  try {
+    const commits = await getJson(
+      `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/commits?author=${encodeURIComponent(username)}&per_page=1`,
+    );
+    const commit = Array.isArray(commits) ? commits[0] : null;
+    const at = commit?.commit?.author?.date || commit?.commit?.committer?.date || null;
+    if (!at) return null;
+    return { repo: `${owner}/${repo}`, at };
+  } catch {
+    return null;
+  }
+}
+
 async function graphql(query, variables) {
   if (!token) return null;
   const response = await fetch("https://api.github.com/graphql", {
@@ -243,9 +258,22 @@ const publicPush = eventPages
 const latestPublicRepo = Array.isArray(publicRepos)
   ? publicRepos.find((repo) => repo?.name && repo.private !== true && !repo.fork)
   : null;
-
-const publicRepo = publicPush?.repo?.name || (latestPublicRepo ? `${latestPublicRepo.owner?.login || username}/${latestPublicRepo.name}` : "");
-const publicPushAt = publicPush?.created_at || latestPublicRepo?.pushed_at || null;
+const latestPublicOwner = latestPublicRepo?.owner?.login || username;
+const authoredPushes = (
+  await Promise.all([
+    latestAuthoredPush(username, username),
+    latestPublicRepo?.name && latestPublicRepo.name.toLowerCase() !== username.toLowerCase()
+      ? latestAuthoredPush(latestPublicOwner, latestPublicRepo.name)
+      : null,
+  ])
+).filter(Boolean);
+const publicCandidates = [
+  publicPush?.repo?.name && publicPush?.created_at ? { repo: publicPush.repo.name, at: publicPush.created_at } : null,
+  ...authoredPushes,
+].filter(Boolean);
+const latestPublic = publicCandidates.sort((a, b) => a.at.localeCompare(b.at)).at(-1) || null;
+const publicRepo = latestPublic?.repo || "";
+const publicPushAt = latestPublic?.at || null;
 
 const latestCalendarDay = [...lastFourteen].reverse().find((day) => day.contributionCount > 0)?.date || null;
 const latestActivityDate =
@@ -297,9 +325,17 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
   </defs>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
   <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
-  <circle cx="${CONFIG.live.cx}" cy="${CONFIG.live.cy}" r="${CONFIG.live.r}" fill="${CONFIG.colors.gold}">
-    <animate attributeName="opacity" values="${CONFIG.live.opacity}" dur="${CONFIG.live.duration}" repeatCount="indefinite"/>
-  </circle>
+  <g id="liveMark" transform="translate(${CONFIG.live.x} ${CONFIG.live.y})">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="0;0;360;360" keyTimes="0;0.22;0.78;1" dur="${CONFIG.live.duration}" repeatCount="indefinite"/>
+      <g>
+        <animateTransform attributeName="transform" type="scale" values="0.34;1;1;0.34" keyTimes="0;0.22;0.78;1" dur="${CONFIG.live.duration}" repeatCount="indefinite"/>
+        <circle cx="0" cy="${(-CONFIG.live.orbit).toFixed(2)}" r="${CONFIG.live.r}" fill="${CONFIG.colors.gold}"/>
+        <circle cx="${(CONFIG.live.orbit * 0.866).toFixed(2)}" cy="${(CONFIG.live.orbit * 0.5).toFixed(2)}" r="${CONFIG.live.r}" fill="${CONFIG.colors.gold}"/>
+        <circle cx="${(-CONFIG.live.orbit * 0.866).toFixed(2)}" cy="${(CONFIG.live.orbit * 0.5).toFixed(2)}" r="${CONFIG.live.r}" fill="${CONFIG.colors.gold}"/>
+      </g>
+    </g>
+  </g>
   <line x1="400" y1="${CONFIG.type.dividerTop}" x2="400" y2="${CONFIG.type.dividerBottom}" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <line x1="800" y1="${CONFIG.type.dividerTop}" x2="800" y2="${CONFIG.type.dividerBottom}" stroke="${CONFIG.colors.divider}" stroke-width="1"/>
   <g font-family="${CONFIG.type.family}">

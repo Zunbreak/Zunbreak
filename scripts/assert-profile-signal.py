@@ -47,6 +47,8 @@ def main() -> None:
     calendar_source = calendar_mod.read_text(encoding="utf-8")
     if "ContributionCalendar-day" not in calendar_source or "/contributions" not in calendar_source:
         fail("Public calendar parser must read GitHub's public ContributionCalendar-day page.")
+    if "commits?author=" not in source:
+        fail("Generator must read user-authored public commits, not only the delayed events feed.")
     for banned in ("PRIVATE PUSH", "QUIET", "SURGE", "SIGNAL / 14D", "LATEST SIGNAL", "INCLUDES ANONYMISED PRIVATE CONTRIBUTIONS"):
         if banned in source:
             fail(f"Generator still contains removed terminology: {banned}.")
@@ -72,17 +74,22 @@ def main() -> None:
         fail("SVG must not include the graph scan.")
     if "C:\\Zunbreak" not in svg or "Knock, knock." not in svg:
         fail("SVG must include the C:\\Zunbreak terminal knock line.")
+    # Reject-list only: discarded draft copy that must never reappear on the public SVG.
     for banned in ("Neo", "NEO", "Matrix", "MATRIX", "rabbit", "C:\\Users"):
         if banned in svg:
             fail(f"SVG must stay subtle; found {banned}.")
-    if svg.lower().count("<animate") != 2:
-        fail("SVG should keep the live-dot pulse and the blinking terminal cursor.")
+    if svg.lower().count("<animate") != 3:
+        fail("SVG should keep the thinking-dots motion and the blinking terminal cursor.")
     if 'calcMode="discrete"' not in svg:
         fail("Cursor must snap on/off, not fade.")
-    if not re.search(r'<circle[^>]*fill="#e8ad21"', svg) or "0.32;0.92;0.32" not in svg:
-        fail("SVG must include the slow gold live-dot pulse.")
+    if 'id="liveMark"' not in svg:
+        fail("SVG must include the live thinking mark.")
+    if svg.count("<circle") != 3:
+        fail("Live mark must be three thinking dots.")
+    if 'type="rotate"' not in svg or 'type="scale"' not in svg:
+        fail("Thinking dots must spin a turn and pull in/out.")
     if "live:" not in source or "CONFIG.live" not in source:
-        fail("Generator must keep the live-dot in CONFIG.")
+        fail("Generator must keep the live mark in CONFIG.")
     for label in (
         "CONTRIBUTIONS · LAST 14 DAYS",
         "LATEST ACTIVITY",
