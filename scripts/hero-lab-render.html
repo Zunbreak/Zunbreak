@@ -15,6 +15,7 @@
     const HEIGHT = 400;
     const canvas = document.querySelector("#preview");
     const ctx = canvas.getContext("2d", { alpha: false });
+    const GITHUB_README_BG = "#0d1117";
     const contentLayer = document.createElement("canvas");
     contentLayer.width = WIDTH;
     contentLayer.height = HEIGHT;
@@ -79,12 +80,14 @@
     function renderFrame(target, time, config) {
       renderFrameContent(contentCtx, time, config);
       target.clearRect(0, 0, WIDTH, HEIGHT);
-      target.fillStyle = "#020304";
+      target.fillStyle = GITHUB_README_BG;
       target.fillRect(0, 0, WIDTH, HEIGHT);
       target.save();
       roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
       target.clip();
       target.drawImage(contentLayer, 0, 0);
+      target.restore();
+      target.save();
       target.strokeStyle = "#343a43";
       target.lineWidth = 2;
       roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
