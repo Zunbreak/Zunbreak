@@ -1,5 +1,10 @@
 name: Update Profile Signal
 
+# Token policy (do not weaken):
+# - GITHUB_TOKEN only. Never a PAT, never extra secrets.
+# - Commits stay github-actions[bot], not Zunbreak.
+# - No pull_request / pull_request_target triggers.
+
 on:
   workflow_dispatch:
   schedule:

@@ -15,6 +15,10 @@
     const HEIGHT = 400;
     const canvas = document.querySelector("#preview");
     const ctx = canvas.getContext("2d", { alpha: false });
+    const contentLayer = document.createElement("canvas");
+    contentLayer.width = WIDTH;
+    contentLayer.height = HEIGHT;
+    const contentCtx = contentLayer.getContext("2d", { alpha: true });
     const daemonLayer = document.createElement("canvas");
     daemonLayer.width = WIDTH;
     daemonLayer.height = HEIGHT;
@@ -58,8 +62,7 @@
       }));
     }
 
-    function renderFrame(target, time, config) {
-      target.save();
+    function renderFrameContent(target, time, config) {
       target.clearRect(0, 0, WIDTH, HEIGHT);
       target.fillStyle = "#020304";
       target.fillRect(0, 0, WIDTH, HEIGHT);
@@ -71,7 +74,21 @@
       renderParticles(target, time, config);
       renderSignal(target, time, config);
       renderBrand(target, config);
-      renderFrameBorder(target);
+    }
+
+    function renderFrame(target, time, config) {
+      renderFrameContent(contentCtx, time, config);
+      target.clearRect(0, 0, WIDTH, HEIGHT);
+      target.fillStyle = "#020304";
+      target.fillRect(0, 0, WIDTH, HEIGHT);
+      target.save();
+      roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
+      target.clip();
+      target.drawImage(contentLayer, 0, 0);
+      target.strokeStyle = "#343a43";
+      target.lineWidth = 2;
+      roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
+      target.stroke();
       target.restore();
     }
 
@@ -249,25 +266,6 @@
         target.fillText(character, cursor, y);
         cursor += target.measureText(character).width + spacing;
       }
-    }
-
-    function renderFrameBorder(target) {
-      target.save();
-      target.strokeStyle = "#343a43";
-      target.lineWidth = 2;
-      roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
-      target.stroke();
-      const line = target.createLinearGradient(20, 0, 1166, 0);
-      line.addColorStop(0, "rgba(228,169,28,.96)");
-      line.addColorStop(.72, "rgba(228,169,28,.52)");
-      line.addColorStop(1, "rgba(228,169,28,0)");
-      target.strokeStyle = line;
-      target.lineWidth = 2;
-      target.beginPath();
-      target.moveTo(22, 2);
-      target.lineTo(1166, 2);
-      target.stroke();
-      target.restore();
     }
 
     function roundedRect(target, x, y, width, height, radius) {

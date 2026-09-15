@@ -15,7 +15,6 @@
     </filter>
   </defs>
   <rect x="1" y="1" width="1198" height="188" rx="8" fill="#07090d" stroke="#343a43" stroke-width="2"/>
-  <path d="M18 2 H1182" fill="none" stroke="#e8ad21" stroke-width="2" opacity="0.78"/>
   <g id="liveMark" transform="translate(28 18)">
     <g>
       <animateTransform attributeName="transform" type="rotate" values="0;0;360;360" keyTimes="0;0.22;0.78;1" dur="3.6s" repeatCount="indefinite"/>

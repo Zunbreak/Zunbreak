@@ -60,8 +60,17 @@ def main() -> None:
     workflow = WORKFLOW.read_text(encoding="utf-8")
     if "workflow_dispatch" not in workflow or "0 */3 * * *" not in workflow:
         fail("Workflow must support manual runs and a three-hour schedule.")
-    if "secrets.GITHUB_TOKEN" not in workflow:
-        fail("Workflow must use GITHUB_TOKEN only.")
+    secret_names = re.findall(r"secrets\.([A-Z0-9_]+)", workflow)
+    if secret_names != ["GITHUB_TOKEN"]:
+        fail("Workflow must use secrets.GITHUB_TOKEN only; never a PAT or extra secrets.")
+    if re.search(r"(?m)^\s*pull_request(_target)?:", workflow):
+        fail("Workflow must not run on pull_request or pull_request_target.")
+    if 'user.name "github-actions[bot]"' not in workflow:
+        fail("Workflow commits must stay github-actions[bot].")
+    if 'user.email "41898282+github-actions[bot]@users.noreply.github.com"' not in workflow:
+        fail("Workflow commits must stay the github-actions[bot] noreply address.")
+    if re.search(r"process\.env\.(GH_PAT|GH_TOKEN|PERSONAL_ACCESS_TOKEN|PAT)\b", source):
+        fail("Generator must not read a PAT or extra token env var.")
 
     if not SVG.is_file():
         fail("Missing assets/profile-signal.svg")

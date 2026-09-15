@@ -9,7 +9,6 @@ const CONFIG = {
   panel: {
     radius: 8,
     strokeWidth: 2,
-    goldHairline: 2,
   },
   colors: {
     background: "#07090d",
@@ -324,7 +323,6 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CONFIG.width}" hei
     </filter>
   </defs>
   <rect x="1" y="1" width="${CONFIG.width - 2}" height="${CONFIG.height - 2}" rx="${CONFIG.panel.radius}" fill="${CONFIG.colors.background}" stroke="${CONFIG.colors.frame}" stroke-width="${CONFIG.panel.strokeWidth}"/>
-  <path d="M18 2 H1182" fill="none" stroke="${CONFIG.colors.gold}" stroke-width="${CONFIG.panel.goldHairline}" opacity="0.78"/>
   <g id="liveMark" transform="translate(${CONFIG.live.x} ${CONFIG.live.y})">
     <g>
       <animateTransform attributeName="transform" type="rotate" values="0;0;360;360" keyTimes="0;0.22;0.78;1" dur="${CONFIG.live.duration}" repeatCount="indefinite"/>
