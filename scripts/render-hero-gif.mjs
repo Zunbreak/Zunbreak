@@ -49,6 +49,7 @@ const server = createServer((request, response) => {
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const { port } = server.address();
 const payload = JSON.parse(await readFile(settingsPath, "utf8"));
+await run("py", ["-3", join(root, "scripts", "mask-hero-art.py")]);
 const settings = payload.settings;
 const fps = 12;
 const labCycle = 4.8 / Math.max(Number(settings.tempo) || 0.2, 0.2);

@@ -16,6 +16,16 @@
     const canvas = document.querySelector("#preview");
     const ctx = canvas.getContext("2d", { alpha: false });
     const GITHUB_README_BG = "#0d1117";
+    const PANEL = {
+      x: 1,
+      y: 1,
+      width: WIDTH - 2,
+      height: HEIGHT - 2,
+      radius: 8,
+      stroke: 2,
+      strokeColor: "#343a43",
+      fill: "#07090d",
+    };
     const contentLayer = document.createElement("canvas");
     contentLayer.width = WIDTH;
     contentLayer.height = HEIGHT;
@@ -63,9 +73,29 @@
       }));
     }
 
+    function appendRoundedRect(target, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      target.moveTo(x + r, y);
+      target.arcTo(x + width, y, x + width, y + height, r);
+      target.arcTo(x + width, y + height, x, y + height, r);
+      target.arcTo(x, y + height, x, y, r);
+      target.arcTo(x, y, x + width, y, r);
+      target.closePath();
+    }
+
+    function fillOutsidePanel(target) {
+      target.save();
+      target.fillStyle = GITHUB_README_BG;
+      target.beginPath();
+      target.rect(0, 0, WIDTH, HEIGHT);
+      appendRoundedRect(target, PANEL.x, PANEL.y, PANEL.width, PANEL.height, PANEL.radius);
+      target.fill("evenodd");
+      target.restore();
+    }
+
     function renderFrameContent(target, time, config) {
       target.clearRect(0, 0, WIDTH, HEIGHT);
-      target.fillStyle = "#020304";
+      target.fillStyle = PANEL.fill;
       target.fillRect(0, 0, WIDTH, HEIGHT);
       target.filter = "brightness(0.96) contrast(1.04) saturate(1.02)";
       target.drawImage(sourceImage, 0, 0, WIDTH, HEIGHT);
@@ -83,16 +113,17 @@
       target.fillStyle = GITHUB_README_BG;
       target.fillRect(0, 0, WIDTH, HEIGHT);
       target.save();
-      roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
+      roundedRect(target, PANEL.x, PANEL.y, PANEL.width, PANEL.height, PANEL.radius);
       target.clip();
       target.drawImage(contentLayer, 0, 0);
       target.restore();
       target.save();
-      target.strokeStyle = "#343a43";
-      target.lineWidth = 2;
-      roundedRect(target, 1, 1, WIDTH - 2, HEIGHT - 2, 18);
+      target.strokeStyle = PANEL.strokeColor;
+      target.lineWidth = PANEL.stroke;
+      roundedRect(target, PANEL.x, PANEL.y, PANEL.width, PANEL.height, PANEL.radius);
       target.stroke();
       target.restore();
+      fillOutsidePanel(target);
     }
 
     function renderDaemonExposure(target, exposure) {
@@ -272,14 +303,8 @@
     }
 
     function roundedRect(target, x, y, width, height, radius) {
-      const r = Math.min(radius, width / 2, height / 2);
       target.beginPath();
-      target.moveTo(x + r, y);
-      target.arcTo(x + width, y, x + width, y + height, r);
-      target.arcTo(x + width, y + height, x, y + height, r);
-      target.arcTo(x, y + height, x, y, r);
-      target.arcTo(x, y, x + width, y, r);
-      target.closePath();
+      appendRoundedRect(target, x, y, width, height, radius);
     }
 
     window.setHeroSettings = (next) => {
