@@ -111,9 +111,15 @@ function publicPushValue(repo, at) {
   const prefix = `${username}/`;
   const name = repo.toUpperCase().startsWith(prefix.toUpperCase()) ? repo.slice(prefix.length) : repo;
   const date = formatDate(at);
-  const line = date === CONFIG.labels.empty ? name.toUpperCase() : `${name.toUpperCase()} · ${date}`;
   const columnChars = Math.max(1, Math.floor((CONFIG.width - 828 - 36) / (CONFIG.type.valueSize * 0.6)));
-  return clip(line, Math.min(CONFIG.maxPublicChars, columnChars));
+  const max = Math.min(CONFIG.maxPublicChars, columnChars);
+  const repoName = name.toUpperCase();
+  if (date === CONFIG.labels.empty) return clip(repoName, max);
+  const suffix = ` · ${date}`;
+  if (suffix.length >= max) return clip(date, max);
+  const repoMax = max - suffix.length;
+  const repoPart = repoName.length <= repoMax ? repoName : `${repoName.slice(0, Math.max(repoMax - 1, 1))}…`;
+  return `${repoPart}${suffix}`;
 }
 
 function catmullRomPath(points, yMax) {
