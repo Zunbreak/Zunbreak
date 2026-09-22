@@ -14,7 +14,7 @@
     "particles": 100,
     "exposure": 85,
     "preset": "custom",
-    "titleText": "ZUNBREAK",
-    "subtitleText": "Securing the Human Link"
+    "titleText": "",
+    "subtitleText": ""
   }
 }

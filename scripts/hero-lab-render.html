@@ -34,6 +34,10 @@
     daemonLayer.width = WIDTH;
     daemonLayer.height = HEIGHT;
     const daemonCtx = daemonLayer.getContext("2d");
+    const signalShadeLayer = document.createElement("canvas");
+    signalShadeLayer.width = WIDTH;
+    signalShadeLayer.height = HEIGHT;
+    const signalShadeCtx = signalShadeLayer.getContext("2d");
     const sourceImage = new Image();
     const particles = makeParticles(96);
     let settings = {
@@ -44,7 +48,7 @@
       rings: 38,
       particles: 40,
       exposure: 107,
-      titleText: "ZUNBREAK",
+      titleText: "",
       subtitleText: ""
     };
 
@@ -101,7 +105,7 @@
       target.drawImage(sourceImage, 0, 0, WIDTH, HEIGHT);
       target.filter = "none";
       renderDaemonExposure(target, config.exposure / 100);
-      renderTextField(target);
+      renderSignalShade(target);
       renderParticles(target, time, config);
       renderSignal(target, time, config);
       renderBrand(target, config);
@@ -142,14 +146,41 @@
       target.drawImage(daemonLayer, 0, 0);
     }
 
-    function renderTextField(target) {
-      const shade = target.createLinearGradient(0, 0, 825, 0);
-      shade.addColorStop(0, "rgba(3,5,8,.96)");
-      shade.addColorStop(.52, "rgba(3,5,8,.73)");
-      shade.addColorStop(.82, "rgba(3,5,8,.18)");
-      shade.addColorStop(1, "rgba(3,5,8,0)");
-      target.fillStyle = shade;
-      target.fillRect(0, 0, 850, HEIGHT);
+    const SIGNAL = { baseline: 278, centerX: 591, startX: 352, endX: 830, edgeFade: 52 };
+
+    function signalTaper(x) {
+      const edge = Math.min(x - SIGNAL.startX, SIGNAL.endX - x);
+      const t = Math.max(0, Math.min(1, edge / SIGNAL.edgeFade));
+      return t * t * (3 - 2 * t);
+    }
+
+    function renderSignalShade(target) {
+      const { baseline, startX, endX, edgeFade } = SIGNAL;
+      const width = endX - startX;
+      const y0 = baseline - 70;
+      const height = 140;
+      const fade = edgeFade / width;
+      const layer = signalShadeCtx;
+      layer.clearRect(0, 0, WIDTH, HEIGHT);
+      layer.globalCompositeOperation = "source-over";
+      const vertical = layer.createLinearGradient(0, y0, 0, y0 + height);
+      vertical.addColorStop(0, "rgba(3,5,8,0)");
+      vertical.addColorStop(0.28, "rgba(3,5,8,0.55)");
+      vertical.addColorStop(0.5, "rgba(3,5,8,0.8)");
+      vertical.addColorStop(0.72, "rgba(3,5,8,0.55)");
+      vertical.addColorStop(1, "rgba(3,5,8,0)");
+      layer.fillStyle = vertical;
+      layer.fillRect(startX, y0, width, height);
+      layer.globalCompositeOperation = "destination-in";
+      const horizontal = layer.createLinearGradient(startX, 0, endX, 0);
+      horizontal.addColorStop(0, "rgba(0,0,0,0)");
+      horizontal.addColorStop(fade, "rgba(0,0,0,1)");
+      horizontal.addColorStop(1 - fade, "rgba(0,0,0,1)");
+      horizontal.addColorStop(1, "rgba(0,0,0,0)");
+      layer.fillStyle = horizontal;
+      layer.fillRect(startX, y0, width, height);
+      layer.globalCompositeOperation = "source-over";
+      target.drawImage(signalShadeLayer, 0, 0);
     }
 
     function loopUnit(time, config) {
@@ -183,25 +214,25 @@
     }
 
     function renderSignal(target, time, config) {
-      const baseline = 278;
-      const startX = 365;
-      const endX = 830;
+      const { baseline, centerX, startX, endX } = SIGNAL;
       const step = Math.max(3, Math.round(6 / config.density));
       const amp = config.amplitude;
       const glow = config.glow / 100;
       const speed = Math.max(Number(config.tempo) || 0.2, 0.2);
-      const centerX = 591;
       const halfSpan = Math.max(centerX - startX, endX - centerX);
       const { cycle, u, t, period } = loopUnit(time, config);
 
       target.save();
       target.globalCompositeOperation = "screen";
-      target.strokeStyle = `rgba(236,174,31,${.24 + glow * .16})`;
       target.lineWidth = .75;
-      target.beginPath();
-      target.moveTo(startX, baseline + .5);
-      target.lineTo(endX, baseline + .5);
-      target.stroke();
+      for (let x = startX; x < endX; x += step) {
+        const taper = signalTaper(x + step / 2);
+        target.strokeStyle = `rgba(236,174,31,${(.24 + glow * .16) * taper})`;
+        target.beginPath();
+        target.moveTo(x, baseline + .5);
+        target.lineTo(Math.min(x + step, endX), baseline + .5);
+        target.stroke();
+      }
 
       if (glow > 0) {
         target.shadowColor = "rgba(244,184,43,.8)";
@@ -216,7 +247,7 @@
       const carrierTurnsC = Math.max(1, Math.round(period * speed * 0.9 / (Math.PI * 2)));
 
       for (let x = startX; x <= endX; x += step) {
-        const n = (x - startX) / (endX - startX);
+        const taper = signalTaper(x);
         const radialDistance = Math.abs(x - centerX);
         const radialProgress = radialDistance / halfSpan;
         let outwardPulse = 0;
@@ -232,11 +263,10 @@
           Math.sin(radialDistance * .043 * config.density - u * carrierTurnsB * Math.PI * 2) * .31 +
           Math.sin(radialDistance * .173 * config.density - u * carrierTurnsC * Math.PI * 2) * .17;
         const texture = .42 + .58 * Math.abs(carrier);
-        const height = 1.5 + amp * envelope * texture;
-        const silhouetteFade = n > .86 ? Math.max(0, (1 - n) / .14) : 1;
-        const alpha = (.26 + envelope * (.34 + glow * .28)) * silhouetteFade;
+        const height = (1.5 + amp * envelope * texture) * taper;
+        const alpha = (.26 + envelope * (.34 + glow * .28)) * taper;
         target.strokeStyle = `rgba(244,184,43,${alpha})`;
-        target.lineWidth = n > .54 ? 1.1 : .9;
+        target.lineWidth = 1;
         target.beginPath();
         target.moveTo(x + .5, baseline - height);
         target.lineTo(x + .5, baseline + height);
@@ -276,20 +306,22 @@
     }
 
     function renderBrand(target, config) {
-      const title = (config.titleText || "").trim().toUpperCase() || "ZUNBREAK";
+      const title = (config.titleText || "").trim().toUpperCase();
       const subtitle = (config.subtitleText || "").trim();
       target.save();
       target.textBaseline = "alphabetic";
       target.shadowColor = "rgba(0,0,0,.72)";
-      target.shadowBlur = 7;
-      target.fillStyle = "#f4f1e9";
-      target.font = '700 68px "Arial Narrow", "Roboto Condensed", "Segoe UI", sans-serif';
-      drawSpacedText(target, title, 57, 226, 7.5);
+      if (title) {
+        target.shadowBlur = 7;
+        target.fillStyle = "#f4f1e9";
+        target.font = '700 68px "Arial Narrow", "Roboto Condensed", "Segoe UI", sans-serif';
+        drawSpacedText(target, title, 57, 226, 7.5);
+      }
       if (subtitle) {
         target.shadowBlur = 4;
         target.fillStyle = "#dca51e";
         target.font = "600 20px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-        drawSpacedText(target, subtitle, 61, 270, 3.2);
+        drawSpacedText(target, subtitle, 61, title ? 270 : 248, 3.2);
       }
       target.restore();
     }

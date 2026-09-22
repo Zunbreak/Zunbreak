@@ -34,10 +34,10 @@ def main() -> None:
     payload = json.loads(SETTINGS.read_text(encoding="utf-8"))
     if payload.get("schema") != "zunbreak-profile-lab/v1":
         fail("Settings JSON is not a Zunbreak profile lab export.")
-    if payload.get("settings", {}).get("titleText", "").upper() != "ZUNBREAK":
-        fail("Lab settings must keep the ZUNBREAK title.")
-    if payload.get("settings", {}).get("subtitleText", "").strip() != "Securing the Human Link":
-        fail("Hero subtitle must be 'Securing the Human Link'.")
+    if payload.get("settings", {}).get("titleText", "").strip():
+        fail("Hero title must stay empty on the GIF.")
+    if payload.get("settings", {}).get("subtitleText", "").strip():
+        fail("Hero subtitle must stay empty on the GIF.")
 
     if not GIF.is_file():
         fail("Animated hero GIF is missing: assets/zunbreak-hero.gif")
