@@ -8,5 +8,5 @@
 
 
 
-<p align="center"><a href="https://zunbreak.com"><img src="./assets/studio-link.png" width="176" height="52" alt="Studio" /></a> <a href="https://www.linkedin.com/in/zebastian-zunbreak/"><img src="./assets/linkedin-link.png" width="176" height="52" alt="LinkedIn" /></a></p>
+<p align="center"><a href="https://zunbreak.com"><img src="./assets/studio-box.png?v=1" width="184" height="52" alt="Studio" /></a> <a href="https://www.linkedin.com/in/zebastian-zunbreak/"><img src="./assets/linkedin-box.png?v=1" width="184" height="52" alt="LinkedIn" /></a></p>
 
